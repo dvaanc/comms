@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
 import LoginButton from './nav-components/LoginButton'
 import Logo from './nav-components/Logo'
 
 export default function Navbar() {
-  const [loginStatus, setLoginStatus] = useState(false as boolean);
+
 
   return (
-    <div className="
+    <div 
+    className="
     none:container 
     h-20
     px-6 
@@ -19,7 +20,7 @@ export default function Navbar() {
     "
     >
       <Logo />
-      <LoginButton isLoading={loginStatus} />
+      <LoginButton  />
     </div>
   )
 }
