@@ -1,7 +1,6 @@
 import React from 'react'
 import LoginButton from './nav-components/LoginButton'
 import Logo from './nav-components/Logo'
-
 export default function Navbar() {
 
 

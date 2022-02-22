@@ -1,8 +1,8 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import Navbar from '../components/Index/Navbar'
-import Content from '../components/Index/Content'
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import Image from 'next/image';
+import Navbar from '../components/Index/Navbar';
+import Content from '../components/Index/Content';
 
 const Home: NextPage = () => {
   return (

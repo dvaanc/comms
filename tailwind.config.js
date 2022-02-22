@@ -7,6 +7,7 @@ module.exports = {
     extend: {
       colors: {
         blue: {
+          'saturated-navy': '#2E303E',
           'dark-navy': '#1C1E26',
           'navy': '#32445F',
           'dark-blue': '#0F4C75',
@@ -15,6 +16,16 @@ module.exports = {
         },
         grey: {
           'muted': '#6c757d',
+        },
+        custom: {
+          'heading': '#25b2bc',
+
+        },
+        input: {
+          'bg': '#232530',
+          'border': 'rgba(0, 0, 0, 0.3)',
+          'hover': '#040405',
+          'focus': 'hsl(197, 100%, 47.8%)',
         }
       }
     }
