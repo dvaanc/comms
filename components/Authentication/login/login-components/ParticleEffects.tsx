@@ -24,12 +24,12 @@ export default function ParticleEffects() {
             value: ["#f67e7d", "#843b62", "#621940"]
           },
           links: {
-            color: "#ffb997",
+            color: "#E95678",
             enable: true
           },
           move: {
             enable: true,
-            speed: 6
+            speed: 1/2
           },
           size: {
             value: 5,

@@ -22,7 +22,8 @@ export default function LoginButton({ }) {
           uppercase
           rounded-full
           transition duration-150 ease-in-out
-          hover:shadow-inner
+          hover:scale-110
+          select-none
           "
       >
 

@@ -1,14 +1,28 @@
 import React from 'react'
-
+import Link from 'next/link';
 interface ContentButtonProps {
-  bgColour: string
+  bgColor: string,
+  textColor?: string,
+  textContent: string,
 }
-export default function ContentButton() {
+export default function ContentButton({ bgColor, textColor, textContent }: ContentButtonProps) {
+  const styles = `
+    px-8 
+    py-3 
+    bg-${bgColor}
+    text-${textColor}
+    font-medium 
+    text-xs 
+    uppercase 
+    rounded 
+    hover:scale-110
+    transition duration-150 ease-in-out
+  `
   return (
-    <button
-      type="button"
-      className="px-8 py-3 text-black font-medium text-xs uppercase rounded hover:bg-white transition duration-150 ease-in-out">
-      Open comms in your browser
-  </button>
+    <Link href="/login">
+      <button type="button" className={styles}>
+        {textContent}
+      </button>
+    </Link>
   )
 }

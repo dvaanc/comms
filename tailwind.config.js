@@ -30,17 +30,44 @@ module.exports = {
         },
         pink: {
           'hot-pink': '#E95678',
-        }
-
-      }
+        },
+      },
+      keyframes: {
+        loadFormContainer: {
+          '0%': {
+            transform: 'scale(1.1) translateY(-60px) translateZ(20px)',
+            opacity: '0',
+          },
+          '50%': {
+            transform: 'translateY(15px)',
+            opacity: '0.7',
+          },
+          '100%': {
+            transform: 'scale(1) translateY(0px) translateZ(0px)',
+            opacity: '1',
+          },
+        },
+      },
+      animation: {
+        'loadFormContainer': 'loadFormContainer 0.35s 0s both'
+      },
     }
   },
-  plugins: [
-  ],
+  plugins: [],
 }
-// 'dark-navy': '#1C1E26',
-// 'navy': '#32445F',
-// 'dark-blue': '#0F4C75',
-// 'blue': '#3282B8',
-// 'light-blue': '#BBE1FA',
-// 'muted': '#6c757d',
+
+// keyframes: {
+//   loadFormContainer: {
+//     '0%': {
+//       transform: 'scale(1.1) translateY(-60px) translateZ(20px)',
+//       opacity: '0'
+//     },
+//     '50%': {
+//       transform: 'translateY(15px)',
+//       opacity: '0.7',
+//     },
+//     '100%': {
+//       transform: 'scale(1) translateY(0px) translateZ(0px)',
+//       opacity: '1',
+//   },
+// },
