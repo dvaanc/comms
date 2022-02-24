@@ -1,4 +1,5 @@
 module.exports = {
+  mode: 'jit',
   content: [
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
@@ -13,6 +14,7 @@ module.exports = {
           'dark-blue': '#0F4C75',
           'blue': '#3282B8',
           'light-blue': '#BBE1FA',
+          'hyperlink-blue': '#0898D2',
         },
         grey: {
           'muted': '#6c757d',
@@ -23,10 +25,13 @@ module.exports = {
         },
         input: {
           'bg': '#232530',
-          'border': 'rgba(0, 0, 0, 0.3)',
           'hover': '#040405',
-          'focus': 'hsl(197, 100%, 47.8%)',
+          'focus': '#00aff4',
+        },
+        pink: {
+          'hot-pink': '#E95678',
         }
+
       }
     }
   },
