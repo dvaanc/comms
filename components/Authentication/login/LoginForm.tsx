@@ -21,7 +21,7 @@ export default function LoginForm() {
     >
       <div className="flex flex-col w-full h-24 pt-4">
         <h4 className="font-extrabold text-custom-heading text-3xl mb-1">Welcome back</h4>
-        <p className="font-semibold text-white">We're so excited to see you again!</p>
+        <p className="font-semibold text-white">We&apos;re so excited to see you again!</p>
       </div>
       <div className="flex flex-col items-start w-full mb-6">
         <LoginInputGroup label="username" />
