@@ -9,8 +9,16 @@ export default function Content() {
         <p className="font-normal text-white">All-in-one text and voice chat, just like Discord. Stop paying for Discord boosts and hassling with Zoom.</p>
       </div>
       <div className="none:container flex flex-col mx-auto mt-8 gap-8 w-72">
-        <ContentButton bgColor="pink-hot-pink" textColor="white" textContent="Login" />
-        <ContentButton bgColor="white" textColor="black" textContent="Open Comms in your browser"/>
+        <Link href="/login" passHref>
+          <button className="px-8 py-3 bg-blue-blue text-white font-medium text-s uppercase rounded-full hover:scale-110 transition duration-150 ease-in-out">
+            Login
+          </button>
+        </Link>
+        <Link href="/register" passHref>
+          <button className="px-8 py-3 bg-pink-hot-pink text-white font-medium text-s uppercase rounded-full hover:scale-110 transition duration-150 ease-in-out">
+            Register
+          </button>
+        </Link>
       </div>
     </div>
   )
