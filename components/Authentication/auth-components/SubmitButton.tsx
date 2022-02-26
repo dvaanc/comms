@@ -10,7 +10,7 @@ export default function SubmitButton({ text }: SubmitButtonProps) {
       text-center
       w-full
       min-h-[46px]
-      bg-pink-hot-pink
+      bg-blue-blue
       rounded
       font-semibold
       text-white
