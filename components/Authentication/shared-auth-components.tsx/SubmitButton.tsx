@@ -1,6 +1,8 @@
 import React from 'react'
-
-export default function LoginSubmitButton() {
+interface SubmitButtonProps {
+  text: string,
+}
+export default function SubmitButton({ text }: SubmitButtonProps) {
   return (
     <button
     className="
@@ -14,7 +16,7 @@ export default function LoginSubmitButton() {
       text-white
       "
     >
-      Login
+      { text }
     </button>
   )
 }

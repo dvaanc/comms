@@ -14,22 +14,22 @@ export default function ParticleEffects() {
       options={{
         fpsLimit: 60,
         background: {
-          color: "#0b032d"
+          color: "#1C1E26"
         },
         backgroundMode: {
           enable: true
         },
         particles: {
           color: {
-            value: ["#f67e7d", "#843b62", "#621940"]
+            value: ["#BBE1FA"]
           },
           links: {
-            color: "#E95678",
+            color: "#FFF",
             enable: true
           },
           move: {
             enable: true,
-            speed: 1/2
+            speed: 1.5
           },
           size: {
             value: 5,

@@ -1,7 +1,7 @@
 import React from 'react'
 import type { NextPage } from 'next'
-import ParticleEffects from '../components/Authentication/login/login-components/ParticleEffects';
-import LoginForm from '../components/Authentication/login/LoginForm';
+import ParticleEffects from '../components/Authentication/shared-auth-components.tsx/ParticleEffects';
+import LoginForm from '../components/Authentication/LoginForm';
 
 const Login: NextPage = () => {
   return (
