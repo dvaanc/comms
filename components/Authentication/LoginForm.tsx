@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import TextInput from './auth-components/TextInput'
 import LoginSubmitButton from './auth-components/SubmitButton'
 
 interface LoginCredentialsProps {
@@ -15,8 +14,13 @@ export default function LoginForm() {
       [e.target.id]: e.target.value
     })
   }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+    e.preventDefault()
+  }
+
   return (
-    <form className="fixed flex flex-col items-start min-w-[456px] h-auto bg-blue-saturated-navy z-10 rounded-md p-5 animate-loadFormContainer">
+    <form className="fixed flex flex-col items-start sm:min-w-72 md:w-[456px] h-auto bg-blue-saturated-navy z-10 rounded-md p-5 animate-loadFormContainer">
       <div className="flex flex-col w-full h-24 pt-4">
         <h4 className="font-extrabold text-blue-light-blue text-3xl mb-1">Welcome back</h4>
         <p className="font-semibold text-white">We&apos;re so excited to see you again!</p>
@@ -39,7 +43,7 @@ export default function LoginForm() {
             className="form-input" 
             id="password"
             value={loginCredentials.password}
-            type="text" 
+            type="password" 
             placeholder="Password"
             onChange={handleInputChange}
           />
@@ -49,7 +53,12 @@ export default function LoginForm() {
         </Link>
       </div>
       <div className="flex flex-col items-start w-full h-auto gap-2">
-        <LoginSubmitButton text="Login" />
+      <input
+        type="submit"
+        id="submit"
+        className="block text-center w-full min-h-[46px] bg-blue-blue rounded font-semibold text-white hover:cursor-pointer"
+        value="Login"
+      />
         <div>
           <span className="text-white font-semibold">Need an </span>
           <Link href="/register" passHref>

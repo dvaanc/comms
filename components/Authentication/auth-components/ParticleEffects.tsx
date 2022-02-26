@@ -29,7 +29,7 @@ export default function ParticleEffects() {
           },
           move: {
             enable: true,
-            speed: 1.5
+            speed: 0.3
           },
           size: {
             value: 5,
