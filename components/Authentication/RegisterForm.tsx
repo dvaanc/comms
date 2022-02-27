@@ -1,14 +1,16 @@
 import React, { FormEvent, useState } from 'react'
 import Link from 'next/link'
-import { onAuthStateChanged } from '@firebase/auth'
+import { createUserWithEmailAndPassword } from '@firebase/auth'
 import { auth } from '../../backend/firebaseConfig'
 import { register } from '../../backend/UserAuth'
+import { useRouter } from 'next/router'
 interface RegisterCredentialsProps {
   email: string,
   username: string,
   password: string,
 }
 export default function RegisterForm() {
+  const router = useRouter()
   const [registerCredentials, setRegisterCredentials] = useState(
     { 
       email: '', 
@@ -23,10 +25,20 @@ export default function RegisterForm() {
     })
   }
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async(e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
     const { email, password } = registerCredentials
-    register(email, password)
+    try {
+      const user = await createUserWithEmailAndPassword(auth, email, password)
+      // await setDoc(doc(db, "user-collection", user.uid), {
+  
+      // })
+      router.push('/channels/@me')
+
+    } catch (error) {
+      if(error instanceof Error) return console.log(error.message)
+      
+    }
   }
 
   return (
@@ -41,16 +53,16 @@ export default function RegisterForm() {
             className="form-input" 
             id="email"
             value={registerCredentials.email}
-            type="text" 
+            type="email" 
             placeholder="Email"
             onChange={handleInputChange}
           />
         </div>
-        <div id="password" className="mb-3 w-full">
+        <div id="username" className="mb-3 w-full">
           <label className="block pl-1 text-gray-300 text-sm font-bold mb-2" htmlFor="password">Username:</label>
           <input 
             className="form-input" 
-            type="password"
+            type="text"
             id="username"
             value={registerCredentials.username}
             placeholder="Username"
@@ -63,7 +75,7 @@ export default function RegisterForm() {
             className="form-input" 
             id="password"
             value={registerCredentials.password}
-            type="text" 
+            type="password" 
             placeholder="Password"
             onChange={handleInputChange}
           />

@@ -1,5 +1,9 @@
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
+import { auth } from '../../backend/firebaseConfig'
+import { login } from '../../backend/UserAuth'
 import LoginSubmitButton from './auth-components/SubmitButton'
 
 interface LoginCredentialsProps {
@@ -7,20 +11,25 @@ interface LoginCredentialsProps {
   password: string,
 }
 export default function LoginForm() {
+  const router = useRouter()
   const [loginCredentials, setLoginCredentials] = useState({ email: '', password: ''} as LoginCredentialsProps)
   const handleInputChange = (e: { target: HTMLInputElement }): void => {
-    setLoginCredentials({
-      ...loginCredentials,
-      [e.target.id]: e.target.value
-    })
+    setLoginCredentials({ ...loginCredentials, [e.target.id]: e.target.value })
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
+    const { email, password } = loginCredentials
+    try {
+      const user = await signInWithEmailAndPassword(auth, email, password)
+      router.push('/channels/@me')
+    } catch (err) {
+      if(err instanceof Error) return console.log(err.message)
+    }
   }
 
   return (
-    <form className="fixed flex flex-col items-start sm:min-w-72 md:w-[456px] h-auto bg-blue-saturated-navy z-10 rounded-md p-5 animate-loadFormContainer">
+    <form onSubmit={handleSubmit} className="fixed flex flex-col items-start sm:min-w-72 md:w-[456px] h-auto bg-blue-saturated-navy z-10 rounded-md p-5 animate-loadFormContainer">
       <div className="flex flex-col w-full h-24 pt-4">
         <h4 className="font-extrabold text-blue-light-blue text-3xl mb-1">Welcome back</h4>
         <p className="font-semibold text-white">We&apos;re so excited to see you again!</p>

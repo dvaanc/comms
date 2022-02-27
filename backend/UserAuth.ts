@@ -5,7 +5,6 @@ import { doc, setDoc } from 'firebase/firestore'
 const register = async(email: string, password: string) => {
   try {
     const user = await createUserWithEmailAndPassword(auth, email, password)
-    console.log(user)
     // await setDoc(doc(db, "user-collection", user.uid), {
 
     // })
