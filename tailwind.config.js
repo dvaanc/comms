@@ -21,6 +21,8 @@ module.exports = {
         },
         custom: {
           'heading': '#25b2bc',
+          'serverList': '#202225',
+          'server-button': '#36393f',
 
         },
         input: {

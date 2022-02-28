@@ -1,9 +1,10 @@
 import React, { FormEvent, useState } from 'react'
 import Link from 'next/link'
 import { createUserWithEmailAndPassword } from '@firebase/auth'
-import { auth } from '../../backend/firebaseConfig'
+import { auth, db } from '../../backend/firebaseConfig'
 import { register } from '../../backend/UserAuth'
 import { useRouter } from 'next/router'
+import { doc, setDoc } from 'firebase/firestore/lite'
 interface RegisterCredentialsProps {
   email: string,
   username: string,
@@ -29,10 +30,11 @@ export default function RegisterForm() {
     e.preventDefault()
     const { email, password } = registerCredentials
     try {
-      const user = await createUserWithEmailAndPassword(auth, email, password)
-      // await setDoc(doc(db, "user-collection", user.uid), {
+      const promise = await createUserWithEmailAndPassword(auth, email, password)
+      await setDoc(doc(db, "user-collection", promise.user.uid), {
   
-      // })
+      })
+
       router.push('/channels/@me')
 
     } catch (error) {

@@ -1,14 +1,11 @@
 import React from 'react'
 import type { NextPage } from 'next'
-import ServerChannelListSection from '../../components/UserDashboard/ServerChannelListSection';
+import ServerListAndChannels from '../../components/UserDashboard/ServerListAndChannels';
 import ServerChatRoomSection from '../../components/UserDashboard/ServerChatRoomSection';
-import UserServerListSection from '../../components/UserDashboard/UserServerListSection';
 const UserDashboard: NextPage = () => {
   return (
-    <div className="none:container min-h-screen min-w-screen flex flex-row bg-blue-dark-navy">
-      <UserServerListSection />
-      <ServerChannelListSection />
-      <ServerChatRoomSection />
+    <div className="none:container h-screen w-screen flex flex-row bg-blue-dark-navy">
+      <ServerListAndChannels/>
     </div>
   )
 }
