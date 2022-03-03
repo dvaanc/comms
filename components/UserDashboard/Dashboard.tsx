@@ -9,6 +9,7 @@ import ServerChatroomSection from './dashboard-components/ServerChatroomSection'
 
 export default function Dashboard() {
   const [hideSidebar, setHideSibebar] = useState(false as boolean)
+  const [hideOverlay, setHideOverlay] = useState(false as boolean)
   const [serverCollection, setServerCollection] = useState([ 'test' ])
   const [serverChatCollection, setServerrChatCollection] = useState([])
   const [voiceControl, setVoiceControl] = useState({ 
@@ -32,20 +33,24 @@ export default function Dashboard() {
   }
   return (
     <div className="inline-flex flex-row h-screen w-screen bg-white fixed">
-      <div 
-      className={`inline-flex flex-row ${ hideSidebar ? `-ml-[318px]` : ``} transition-[margin] duration-600ms`} 
-      onDrag={handleDrag} 
-      id="sidepanel z-0"
-      >
+      <div className={`inline-flex flex-row ${ hideSidebar ? `-ml-[318px]` : ``} transition-[margin] duration-600ms z-0`} onDrag={handleDrag} id="sidepanel">
         <ServerListBar serverCollection={serverCollection} />
         <ServerChannelListBar handleToggleSidebar={handleToggleSidebar}/>
       </div>
-      <div className="inline-flex w-full z-10">
         <ServerChatroomSection hideSidebar={hideSidebar} handleToggleSidebar={handleToggleSidebar} serverChatCollection={serverChatCollection} />
-        <main>
+        <main className={`${hideOverlay ? `hidden pointer-events-none` : `flex pointer-events-none`} fixed w-screen h-screen z-30 top-0 left-0 bg-black/50 transition-all ease-in-out duration-300`}>
+          <section className="m-auto flex flex-col w-[350px] h-[400px]  bg-blue-saturated-navy">
+            <div>
+              
+            </div>
+            <div>
 
+            </div>
+            <div>
+
+            </div>
+          </section>
         </main>
-      </div>
     </div>
   )
 }
