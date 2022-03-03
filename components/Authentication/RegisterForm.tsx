@@ -2,28 +2,32 @@ import React, { FormEvent, useState } from 'react'
 import Link from 'next/link'
 import { createUserWithEmailAndPassword } from '@firebase/auth'
 import { auth, db } from '../../backend/firebaseConfig'
-import { register } from '../../backend/UserAuth'
 import { useRouter } from 'next/router'
 import { doc, setDoc } from 'firebase/firestore/lite'
+import { useForm, SubmitHandler } from 'react-hook-form'
+import { receiveMessageOnPort } from 'worker_threads'
 interface RegisterCredentialsProps {
   email: string,
   username: string,
   password: string,
 }
+type Inputs = {
+  email: string,
+  username: string,
+  password: string,
+}
 export default function RegisterForm() {
+  // const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>({
+
+  // });
   const router = useRouter()
-  const [registerCredentials, setRegisterCredentials] = useState(
-    { 
-      email: '', 
-      username: '', 
-      password: '' 
-    } as RegisterCredentialsProps)
+  const [registerCredentials, setRegisterCredentials] = useState({ email: '', username: '', password: '' } as RegisterCredentialsProps)
+  // const handleRegistration = handleSubmit((data) => { 
+  //   console.log(data) 
+  // })
 
   const handleInputChange = (e: { target: HTMLInputElement }): void => {
-    setRegisterCredentials({
-      ...registerCredentials,
-      [e.target.id]: e.target.value
-    })
+    setRegisterCredentials({ ...registerCredentials, [e.target.id]: e.target.value })
   }
 
   const handleSubmit = async(e: FormEvent<HTMLFormElement>): Promise<void> => {
@@ -42,9 +46,8 @@ export default function RegisterForm() {
       
     }
   }
-
   return (
-    <form onSubmit={handleSubmit} className="fixed flex flex-col items-start sm:min-w-72 md:w-[456px] min-h-[496px] bg-blue-saturated-navy z-10 rounded-md p-5 animate-loadFormContainer">
+    <form onSubmit={handleSubmit} className="fixed flex flex-col items-start sm:min-w-72 md:w-[456px] min-h-[496px] bg-blue-saturated-navy z-10 rounded-md p-5 animate-loadFormContainer" >
       <div className="flex flex-col w-full h-24 pt-4">
         <h4 className="font-extrabold text-blue-light-blue text-3xl mb-1 text-center">Create an account</h4>
       </div>
@@ -57,6 +60,8 @@ export default function RegisterForm() {
             value={registerCredentials.email}
             type="email" 
             placeholder="Email"
+            defaultValue=""
+            // {...register("email"), { required: true, }}
             onChange={handleInputChange}
           />
         </div>
@@ -68,6 +73,8 @@ export default function RegisterForm() {
             id="username"
             value={registerCredentials.username}
             placeholder="Username"
+            defaultValue=""
+            // {...register("username"), { required: true, }}
             onChange={handleInputChange}
           />
         </div>
@@ -79,6 +86,8 @@ export default function RegisterForm() {
             value={registerCredentials.password}
             type="password" 
             placeholder="Password"
+            defaultValue=""
+            // {...register("password"), { required: true, }}
             onChange={handleInputChange}
           />
         </div>
@@ -95,7 +104,7 @@ export default function RegisterForm() {
         </Link>
         
       </div>
-
   </form>
+
   )
 }
