@@ -11,7 +11,7 @@ interface OverlayProps {
 }
 export default function Overlay({ hideOverlay, handleToggleOverlay }: OverlayProps) {
   const [serverValue, setServerValue] = useState({ serverName: '', serverJoin: '', actionType: '' })
-  const [errors, setErros] = useState({ serverName: false, serverJoin: false })
+  const [errors, setErrors] = useState({ serverName: { isError: false, message: ''}, serverJoin: { isError: false, message: '' } })
   const handleInputChange = (e: { target: HTMLInputElement }): void => {
     console.log(serverValue)
     setServerValue({ ...serverValue, [e.target.id]: e.target.value })
@@ -22,7 +22,7 @@ export default function Overlay({ hideOverlay, handleToggleOverlay }: OverlayPro
     console.log(e)
   }
   const createNewServer = async() => {
-    console.log(serverValue.serverName)
+    if(serverValue.serverName === '') return setErrors({ ...errors, serverName: { ...errors.serverName, isError: true }})
     const serverId = v4()
     const serverRef = await setDoc(doc(db, 'server-collection', serverId),  {
       serverName: serverValue.serverName,
@@ -31,12 +31,11 @@ export default function Overlay({ hideOverlay, handleToggleOverlay }: OverlayPro
     })
     const noCategoryRef = await setDoc(doc(db, `server-collection/${serverId}/text-channels/categories/`, 'no-category'), { categoryId: v4() })
     const textChannelsCategoryREf = await setDoc(doc(db, `server-collection/${serverId}/text-channels/categories/`, 'text-channels'), { categoryId: v4() })
-    const generalChannelRef = await setDoc(doc(db, `server-collections/${serverId}/text-channels/categories/text-channels`), {
-      
-    })
+    const generalChannelRef = await setDoc(doc(db, `server-collections/${serverId}/text-channels/categories/text-channels`, 'general'), { channelId: v4() })
   } 
   const joinServer = () => {
     console.log(serverValue.serverJoin)
+    if(serverValue.serverJoin === '') return setErrors({ ...errors, serverJoin: { ...errors.serverJoin, isError: true }})
   }
   
 
@@ -51,11 +50,12 @@ export default function Overlay({ hideOverlay, handleToggleOverlay }: OverlayPro
           <p className="text-sm">Create an epic guild, hang out with your friends.</p>
         </div>
         <div id="serverName" className="flex flex-col mb-3 w-full">
-          <div>
+          <div className="flex flex-col">
             <label className="block pl-1 text-gray-300 text-sm font-bold mb-2" htmlFor="serverName">Server Name:</label>
             <div className="flex flex-row">
               <input 
-                className="min-w-[80%] border border-black/30 rounded py-3 px-3 mr-2 text-gray-300 leading-tight outline-none focus:border-input-focus hover:border-input-hover bg-input-bg transition-colors ease-in-out duration-200" 
+                className={`${!errors.serverName.isError ? `border-black/30 focus:border-input-focus hover:border-input-hover`: `border-red-600`}
+                min-w-[80%] border  rounded py-3 px-3 mr-2 text-gray-300 leading-tight outline-none bg-input-bg transition-colors ease-in-out duration-200`}
                 type="text"
                 id="serverName"
                 value={serverValue.serverName}
@@ -72,6 +72,7 @@ export default function Overlay({ hideOverlay, handleToggleOverlay }: OverlayPro
                 <Image src={arrow} alt="submit-server-name"className="stroke-white"/>
               </button>
             </div>
+            <span className="text-xs mt-1 pl-1 text-red-500">{errors.serverName.isError ? `Field cannot be empty.` : ``}</span>
           </div>
         </div>
         <div className="mb-3">
@@ -79,11 +80,12 @@ export default function Overlay({ hideOverlay, handleToggleOverlay }: OverlayPro
           <p className="text-sm">Join one.</p>
         </div>
         <div id="serverJoin" className="flex flex-col mb-3 w-full">
-          <div>
+          <div className="flex flex-col">
             <label className="block pl-1 text-gray-300 text-sm font-bold mb-2" htmlFor="serverJoin">Server Join:</label>
             <div className="flex flex-row">
               <input 
-                className="min-w-[80%] border border-black/30 rounded py-3 px-3 mr-2 text-gray-300 leading-tight outline-none focus:border-input-focus hover:border-input-hover bg-input-bg transition-colors ease-in-out duration-200" 
+                className={`${!errors.serverJoin.isError ? `border-black/30 focus:border-input-focus hover:border-input-hover`: `border-red-600`}
+                min-w-[80%] border  rounded py-3 px-3 mr-2 text-gray-300 leading-tight outline-none bg-input-bg transition-colors ease-in-out duration-200`}
                 type="text"
                 id="serverJoin"
                 value={serverValue.serverJoin}
@@ -102,6 +104,7 @@ export default function Overlay({ hideOverlay, handleToggleOverlay }: OverlayPro
               </button>
             </div>
           </div>
+          <span className="text-xs mt-1 pl-1 text-red-500">{errors.serverJoin.isError ? `Invalid join link.` : ``}</span>
         </div>
       </section>
     </main>
