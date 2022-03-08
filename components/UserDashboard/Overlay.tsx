@@ -5,6 +5,7 @@ import arrow from '../../assets/images/arrow.png'
 import { doc, setDoc, Timestamp } from 'firebase/firestore'
 import { db } from '../../backend/firebaseConfig'
 import { v4 } from 'uuid'
+import { createCategory, createChannel } from '../../backend/Utility'
 interface OverlayProps {
   hideOverlay: boolean
   handleToggleOverlay(e: React.MouseEvent): void
@@ -13,7 +14,6 @@ export default function Overlay({ hideOverlay, handleToggleOverlay }: OverlayPro
   const [serverValue, setServerValue] = useState({ serverName: '', serverJoin: '', actionType: '' })
   const [errors, setErrors] = useState({ serverName: { isError: false, message: ''}, serverJoin: { isError: false, message: '' } })
   const handleInputChange = (e: { target: HTMLInputElement }): void => {
-    console.log(serverValue)
     setServerValue({ ...serverValue, [e.target.id]: e.target.value })
   }
   const handleServerForm = (e: React.FormEvent) => {
@@ -24,15 +24,23 @@ export default function Overlay({ hideOverlay, handleToggleOverlay }: OverlayPro
   const createNewServer = async() => {
     if(serverValue.serverName === '') return setErrors({ ...errors, serverName: { ...errors.serverName, isError: true }})
     const serverId = v4()
-    const serverRef = await setDoc(doc(db, 'server-collection', serverId),  {
-      serverName: serverValue.serverName,
-      creationDate: Timestamp.now(),
-      serverID: serverId,
-    })
-    const noCategoryRef = await setDoc(doc(db, `server-collection/${serverId}/text-channels/categories/`, 'no-category'), { categoryId: v4() })
-    const textChannelsCategoryREf = await setDoc(doc(db, `server-collection/${serverId}/text-channels/categories/`, 'text-channels'), { categoryId: v4() })
-    const generalChannelRef = await setDoc(doc(db, `server-collections/${serverId}/text-channels/categories/text-channels`, 'general'), { channelId: v4() })
+    try {
+      const serverRef = await setDoc(doc(db, 'server-collection', serverId),  {
+        serverName: serverValue.serverName,
+        creationDate: Timestamp.now(),
+        serverID: serverId,
+      })
+    } catch(err)  {
+      if(err instanceof Error) return console.log(err)
+    }
+    createCategory(serverId, 'text-channels', 'no-category')
+    createCategory(serverId, 'text-channels', 'text-channels')
+    createCategory(serverId, 'voice-channels', 'no-category')
+    createCategory(serverId, 'voice-channels', 'voice-channels')
+    createChannel(serverId, 'text-channels', 'text-channels', 'general')
+    createChannel(serverId, 'voice-channels', 'voice-channels', 'general')
   } 
+
   const joinServer = () => {
     console.log(serverValue.serverJoin)
     if(serverValue.serverJoin === '') return setErrors({ ...errors, serverJoin: { ...errors.serverJoin, isError: true }})

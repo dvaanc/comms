@@ -1,4 +1,4 @@
-import { doc, setDoc } from 'firebase/firestore/lite';
+import { doc, setDoc } from 'firebase/firestore';
 import { v4 } from 'uuid'
 import { db } from './firebaseConfig';
 
@@ -42,4 +42,25 @@ const createChannelsFirebase = async(serverId: string): Promise<void> => {
 //   await updateDoc(userRef, { serverList: arrayUnion(`${serverID}`) });
 // }
 
-export { createChannelsFirebase,  }
+const createCategory = async(serverId: string, channelType: string, categoryName: string):  Promise<void> => {
+  await setDoc(
+    doc(db, `server-collection/${serverId}/${channelType}/`, categoryName), { categoryId: v4() })
+}
+const createChannel = async(serverId: string, channelType: string, categoryName: string, channelName: string): Promise<void> => {
+  await setDoc(
+    doc(db, `server-collection/${serverId}/${channelType}/${categoryName}/channels/`, channelName), { categoryId: v4() })
+}
+const createMessage = async(
+  serverId: string, 
+  channelType: string, 
+  categoryName: string, 
+  channelName: string,
+  userId: string,
+  message: string,
+  ): Promise<void> => {
+  await setDoc(
+    doc(db,`server-collection/${serverId}/${channelType}/${categoryName}/channels/${channelName}`,  )
+  )
+}
+
+export { createChannelsFirebase, createCategory, createChannel }
