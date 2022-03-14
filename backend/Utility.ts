@@ -50,17 +50,17 @@ const createChannel = async(serverId: string, channelType: string, categoryName:
   await setDoc(
     doc(db, `server-collection/${serverId}/${channelType}/${categoryName}/channels/`, channelName), { categoryId: v4() })
 }
-const createMessage = async(
-  serverId: string, 
-  channelType: string, 
-  categoryName: string, 
-  channelName: string,
-  userId: string,
-  message: string,
-  ): Promise<void> => {
-  await setDoc(
-    doc(db,`server-collection/${serverId}/${channelType}/${categoryName}/channels/${channelName}`,  )
-  )
-}
+// const createMessage = async(
+//   serverId: string, 
+//   channelType: string, 
+//   categoryName: string, 
+//   channelName: string,
+//   userId: string,
+//   message: string,
+//   ): Promise<void> => {
+//   await setDoc(
+//     doc(db,`server-collection/${serverId}/${channelType}/${categoryName}/channels/${channelName}`,  )
+//   )
+// }
 
 export { createChannelsFirebase, createCategory, createChannel }

@@ -1,4 +1,4 @@
-import React, { DragEventHandler, useState } from 'react'
+import React, { DragEventHandler, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { uuid } from 'uuidv4'
 
@@ -11,13 +11,17 @@ import Overlay from './Overlay'
 export default function Dashboard() {
   const [hideSidebar, setHideSibebar] = useState(false as boolean)
   const [hideOverlay, setHideOverlay] = useState(true as boolean)
-  const [serverCollection, setServerCollection] = useState([ 'test' ])
+  const [serverCollection, setServerCollection] = useState([] as Array<any>)
   const [serverChatCollection, setServerrChatCollection] = useState([])
   const [voiceControl, setVoiceControl] = useState({ 
     mute: false, 
     deafen: false,
     image: { }
   })
+
+  useEffect(() => {
+    
+  }, [])
   const handleToggleSidebar = () => {
     hideSidebar ? 
       setHideSibebar(false) : setHideSibebar(true)

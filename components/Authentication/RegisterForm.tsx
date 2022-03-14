@@ -1,15 +1,22 @@
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useRef, useState } from 'react'
 import Link from 'next/link'
 import { createUserWithEmailAndPassword } from '@firebase/auth'
-import { auth, db } from '../../backend/firebaseConfig'
+import { auth, db, storage } from '../../backend/firebaseConfig'
 import { useRouter } from 'next/router'
 import { doc, setDoc } from 'firebase/firestore/lite'
-import { useForm, SubmitHandler } from 'react-hook-form'
-import { receiveMessageOnPort } from 'worker_threads'
+// import { useForm, SubmitHandler } from 'react-hook-form'
+// import { register } from '../../backend/UserAuth'
+import upload from '../../assets/images/upload.svg'
+import Image from 'next/image'
+import { ref, uploadBytes } from 'firebase/storage'
 interface RegisterCredentialsProps {
   email: string,
   username: string,
   password: string,
+  profile: {
+    name: string,
+    src: any,
+  }
 }
 type Inputs = {
   email: string,
@@ -18,10 +25,11 @@ type Inputs = {
 }
 export default function RegisterForm() {
   // const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>({
-
+  
   // });
+  const fileInput = useRef<HTMLInputElement>(null)
   const router = useRouter()
-  const [registerCredentials, setRegisterCredentials] = useState({ email: '', username: '', password: '' } as RegisterCredentialsProps)
+  const [registerCredentials, setRegisterCredentials] = useState({ email: '', username: '', password: '', profile: { name: '', src: '' } } as RegisterCredentialsProps)
   // const handleRegistration = handleSubmit((data) => { 
   //   console.log(data) 
   // })
@@ -30,15 +38,23 @@ export default function RegisterForm() {
     setRegisterCredentials({ ...registerCredentials, [e.target.id]: e.target.value })
   }
 
+  const handleFileChange = (e: { target: HTMLInputElement }): void => {
+    if(e.target.files && e.target.files[0]) {
+      setRegisterCredentials({ 
+        ...registerCredentials, 
+        profile: { name: e.target.files[0].name, src: URL.createObjectURL(e.target.files[0]) } 
+      }) 
+    }
+  }
+  
   const handleSubmit = async(e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
-    const { email, password } = registerCredentials
+    const { email, password, username, profile } = registerCredentials
     try {
-      const promise = await createUserWithEmailAndPassword(auth, email, password)
-      await setDoc(doc(db, "user-collection", promise.user.uid), {
-  
-      })
-
+      const userRef = await createUserWithEmailAndPassword(auth, email, password)
+      const storageRef = ref(storage, `user-assets/${userRef.user.uid}/userProfile.png`)
+        await uploadBytes(storageRef, profile.src)
+      await setDoc(doc(db, "user-collection", userRef.user.uid), { email, username })
       router.push('/channels/@me')
 
     } catch (error) {
@@ -90,6 +106,22 @@ export default function RegisterForm() {
             // {...register("password"), { required: true, }}
             onChange={handleInputChange}
           />
+        </div>
+        <div id="profilePicture" className="mb-3 w-full">
+          <label className="block pl-1 text-gray-300 text-sm font-bold mb-2" htmlFor="profilePicture">Profile picture:</label>
+            <button
+              className="form-input flex justify-start items-center gap-4 text-1xl" 
+              id="profilePicture"
+              value="+"
+              type="button"
+              placeholder="Password"
+              onClick={ () => fileInput.current?.click() }
+              // {...register("password"), { required: true, }}
+            >
+              <Image src={upload} width="48" height="48" alt="upload image"/>
+              <p className="text-gray-300">{ registerCredentials.profile.name }</p>
+            </button>
+            <input ref={fileInput} accept="image/*" type="file" className="hidden" onChange={handleFileChange} />
         </div>
       </div>
       <div className="flex flex-col items-start w-full h-auto gap-2">
