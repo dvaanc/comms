@@ -13,6 +13,8 @@ interface LoginCredentialsProps {
 export default function LoginForm() {
   const router = useRouter()
   const [loginCredentials, setLoginCredentials] = useState({ email: '', password: ''} as LoginCredentialsProps)
+
+
   const handleInputChange = (e: { target: HTMLInputElement }): void => {
     setLoginCredentials({ ...loginCredentials, [e.target.id]: e.target.value })
   }

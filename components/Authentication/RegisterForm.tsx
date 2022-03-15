@@ -1,14 +1,14 @@
 import React, { FormEvent, useRef, useState } from 'react'
 import Link from 'next/link'
-import { createUserWithEmailAndPassword } from '@firebase/auth'
+import { createUserWithEmailAndPassword, onAuthStateChanged } from '@firebase/auth'
 import { auth, db, storage } from '../../backend/firebaseConfig'
 import { useRouter } from 'next/router'
-import { doc, setDoc } from 'firebase/firestore/lite'
+import { doc, setDoc } from 'firebase/firestore'
 // import { useForm, SubmitHandler } from 'react-hook-form'
 // import { register } from '../../backend/UserAuth'
 import upload from '../../assets/images/upload.svg'
 import Image from 'next/image'
-import { ref, uploadBytes } from 'firebase/storage'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 interface RegisterCredentialsProps {
   email: string,
   username: string,
@@ -34,6 +34,9 @@ export default function RegisterForm() {
   //   console.log(data) 
   // })
 
+  onAuthStateChanged(auth, (user) =>  {
+    if(user) router.push('channels/@me')
+  })
   const handleInputChange = (e: { target: HTMLInputElement }): void => {
     setRegisterCredentials({ ...registerCredentials, [e.target.id]: e.target.value })
   }
@@ -42,7 +45,7 @@ export default function RegisterForm() {
     if(e.target.files && e.target.files[0]) {
       setRegisterCredentials({ 
         ...registerCredentials, 
-        profile: { name: e.target.files[0].name, src: URL.createObjectURL(e.target.files[0]) } 
+        profile: { name: e.target.files[0].name, src: e.target.files[0] } 
       }) 
     }
   }
@@ -53,8 +56,8 @@ export default function RegisterForm() {
     try {
       const userRef = await createUserWithEmailAndPassword(auth, email, password)
       const storageRef = ref(storage, `user-assets/${userRef.user.uid}/userProfile.png`)
-        await uploadBytes(storageRef, profile.src)
-      await setDoc(doc(db, "user-collection", userRef.user.uid), { email, username })
+      await uploadBytes(storageRef, profile.src)
+      await setDoc(doc(db, "user-collection", `${userRef.user.uid}`), { email, username})
       router.push('/channels/@me')
 
     } catch (error) {
@@ -76,7 +79,7 @@ export default function RegisterForm() {
             value={registerCredentials.email}
             type="email" 
             placeholder="Email"
-            defaultValue=""
+            // defaultValue=""
             // {...register("email"), { required: true, }}
             onChange={handleInputChange}
           />
@@ -89,7 +92,7 @@ export default function RegisterForm() {
             id="username"
             value={registerCredentials.username}
             placeholder="Username"
-            defaultValue=""
+            // defaultValue=""
             // {...register("username"), { required: true, }}
             onChange={handleInputChange}
           />
@@ -102,7 +105,7 @@ export default function RegisterForm() {
             value={registerCredentials.password}
             type="password" 
             placeholder="Password"
-            defaultValue=""
+            // defaultValue=""
             // {...register("password"), { required: true, }}
             onChange={handleInputChange}
           />

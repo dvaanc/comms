@@ -9,6 +9,7 @@ import ServerChatroomSection from './dashboard-components/ServerChatroomSection'
 import Overlay from './Overlay'
 
 export default function Dashboard() {
+  const [user, setUser] = useState({})
   const [hideSidebar, setHideSibebar] = useState(false as boolean)
   const [hideOverlay, setHideOverlay] = useState(true as boolean)
   const [serverCollection, setServerCollection] = useState([] as Array<any>)
@@ -18,7 +19,6 @@ export default function Dashboard() {
     deafen: false,
     image: { }
   })
-
   useEffect(() => {
     
   }, [])
