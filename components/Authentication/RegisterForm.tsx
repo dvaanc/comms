@@ -1,4 +1,4 @@
-import React, { FormEvent, useRef, useState } from 'react'
+import React, { FormEvent, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { createUserWithEmailAndPassword, onAuthStateChanged } from '@firebase/auth'
 import { auth, db, storage } from '../../backend/firebaseConfig'
@@ -24,19 +24,16 @@ type Inputs = {
   password: string,
 }
 export default function RegisterForm() {
-  // const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>({
-  
-  // });
-  const fileInput = useRef<HTMLInputElement>(null)
   const router = useRouter()
-  const [registerCredentials, setRegisterCredentials] = useState({ email: '', username: '', password: '', profile: { name: '', src: '' } } as RegisterCredentialsProps)
-  // const handleRegistration = handleSubmit((data) => { 
-  //   console.log(data) 
-  // })
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if(user) return router.push(`/channels/@me`)
+    })
+  }, [])
 
-  onAuthStateChanged(auth, (user) =>  {
-    if(user) router.push('channels/@me')
-  })
+  const fileInput = useRef<HTMLInputElement>(null)
+  const [registerCredentials, setRegisterCredentials] = useState({ email: '', username: '', password: '', profile: { name: '', src: '' } } as RegisterCredentialsProps)
+
   const handleInputChange = (e: { target: HTMLInputElement }): void => {
     setRegisterCredentials({ ...registerCredentials, [e.target.id]: e.target.value })
   }
@@ -56,8 +53,10 @@ export default function RegisterForm() {
     try {
       const userRef = await createUserWithEmailAndPassword(auth, email, password)
       const storageRef = ref(storage, `user-assets/${userRef.user.uid}/userProfile.png`)
+      const tag = Math.floor(Math.random() * 8999) + 1000
       await uploadBytes(storageRef, profile.src)
-      await setDoc(doc(db, "user-collection", `${userRef.user.uid}`), { email, username})
+      await setDoc(doc(db, "user-collection", `${userRef.user.uid}`), { email, username, tag })
+      await getDownloadURL(storageRef).then((url) => { setDoc(doc(db, 'user-collection', userRef.user.uid), { profile: url }, { merge: true }) })
       router.push('/channels/@me')
 
     } catch (error) {

@@ -16,11 +16,12 @@
     "react-tsparticles": "^1.41.5",
     "tsparticles": "^1.41.5",
     "tsparticles-preset-links": "^1.41.5",
-    "uuidv4": "^6.2.12"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/node": "17.0.21",
     "@types/react": "^17.0.39",
+    "@types/uuid": "^8.3.4",
     "autoprefixer": "^10.4.2",
     "eslint": "8.10.0",
     "eslint-config-next": "12.1.0",

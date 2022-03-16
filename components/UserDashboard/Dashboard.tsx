@@ -1,15 +1,26 @@
 import React, { DragEventHandler, useEffect, useState } from 'react'
 import Image from 'next/image'
-import { uuid } from 'uuidv4'
 
 import { ClickEvent } from 'tsparticles/Options/Classes/Interactivity/Events/ClickEvent'
 import ServerListBar from './dashboard-components/ServerListBar'
 import ServerChannelListBar from './dashboard-components/ServerChannelListBar'
 import ServerChatroomSection from './dashboard-components/ServerChatroomSection'
 import Overlay from './Overlay'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
+import { auth, db, storage } from '../../backend/firebaseConfig'
+import { ref } from 'firebase/storage'
+import { useRouter } from 'next/router'
+import { doc, getDoc } from 'firebase/firestore'
 
 export default function Dashboard() {
-  const [user, setUser] = useState({})
+  const router = useRouter()
+  const [currentUser, setCurrentUser] = useState({ 
+    uid: null as null | any,
+    username: '' as string,
+    tag: null as null | number,
+    profile: null as any,
+  })
+  const [isLoaded, setIsLoaded] = useState(false)
   const [hideSidebar, setHideSibebar] = useState(false as boolean)
   const [hideOverlay, setHideOverlay] = useState(true as boolean)
   const [serverCollection, setServerCollection] = useState([] as Array<any>)
@@ -20,8 +31,29 @@ export default function Dashboard() {
     image: { }
   })
   useEffect(() => {
-    
+    onAuthStateChanged(auth, (user) => {
+      if(user) setCurrentUser({...currentUser, uid: user.uid}) ; setIsLoaded(true)
+      if(!user || user === null) return router.push('/login')
+    })
   }, [])
+  useEffect(() => {
+    console.log(currentUser)
+  }, [currentUser])
+
+  useEffect(() => {
+    const fetchUserInfo = async(uid: string) => {
+      const storageRef = ref(storage, `user-assets/${uid}/userProfile.png`)
+      const profileSnap = await getDoc(doc(db, 'user-collection', uid))
+      if(profileSnap.exists()) {
+        const { username, tag, profileUrl } = profileSnap.data()
+        const profile = await fetch(profileUrl).then(res => res.blob()).then(blob => URL.createObjectURL(blob))
+        setCurrentUser({ ...currentUser, username, tag, profile })
+      }
+      console.log('No user found')
+    }
+    if(isLoaded) fetchUserInfo(currentUser.uid) 
+
+  }, [isLoaded])
   const handleToggleSidebar = () => {
     hideSidebar ? 
       setHideSibebar(false) : setHideSibebar(true)
@@ -49,10 +81,13 @@ export default function Dashboard() {
     <div className="inline-flex flex-row h-screen w-screen bg-white fixed">
       <div className={`inline-flex flex-row ${ hideSidebar ? `-ml-[318px]` : ``} transition-[margin] duration-600ms z-0`} onDrag={handleDrag} id="sidepanel">
         <ServerListBar serverCollection={serverCollection} handleToggleOverlay={handleToggleOverlay}/>
-        <ServerChannelListBar handleToggleSidebar={handleToggleSidebar}/>
+        <ServerChannelListBar handleToggleSidebar={handleToggleSidebar} currentUser={currentUser} />
       </div>
         <ServerChatroomSection hideSidebar={hideSidebar} handleToggleSidebar={handleToggleSidebar} serverChatCollection={serverChatCollection} />
         <Overlay hideOverlay={hideOverlay} handleToggleOverlay={handleToggleOverlay} />
+        <button onClick={ () => { signOut(auth); router.push('/login') } }className="fixed w-[50px] h-[50px] bottom-1 left-3 bg-red-900 rounded-full">
+          Logout
+        </button>
     </div>
   )
 }

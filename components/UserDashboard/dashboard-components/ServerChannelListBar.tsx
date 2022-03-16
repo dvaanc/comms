@@ -9,8 +9,10 @@ import cross from '../../../assets/images/cross.svg'
 
 interface ServerChannelListBarProps {
   handleToggleSidebar(e: React.MouseEvent ): void,
+  currentUser: any,
 }
-export default function ServerChannelListBar({ handleToggleSidebar }: ServerChannelListBarProps) {
+export default function ServerChannelListBar({ handleToggleSidebar, currentUser }: ServerChannelListBarProps) {
+  const { username, profile, tag } = currentUser
   return (
     <main className="flex flex-col min-w-[246px] bg-[#2f3136] h-full">
       <section className="min-h-[56px] pr-4 flex items-center justify-between text-white font-medium text-m tracking-medium shadow-bottom">
@@ -36,12 +38,13 @@ export default function ServerChannelListBar({ handleToggleSidebar }: ServerChan
       </section>
       <section className="w-100 min-h-[58px] pl-4 pr-4 flex items-center justify-between bg-[#292b2f]">
         <div className="flex flex-row gap-2 items-center">
-          <span className="h-[32px] w-[32px] rounded-full cursor-pointer bg-blue-dark-blue">
+          <span className="h-[32px] w-[32px] rounded-full cursor-pointer">
+            {/* { profile && <Image src={profile} height="32px" width="32px" alt="profile picture" />} */}
             
           </span>
           <span className="flex flex-col tracking-wide pt-2 cursor-pointer">
-            <h6 className="font-medium text-sm text-white leading-none">test user</h6>
-            <p className="text-xs text-gray-300">#0001</p>
+            <h6 className="font-medium text-sm text-white leading-none">{ username }</h6>
+            <p className="text-xs text-gray-300">#{ tag }</p>
           </span>
         </div>
         <div className="flex flex-row gap-1 items-center bg-blue">

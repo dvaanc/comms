@@ -1,5 +1,5 @@
 import React from 'react'
-import { uuid } from 'uuidv4'
+import { v4 } from 'uuid'
 import chevronSouth from '../../../assets/images/chevron-south.svg'
 import Image from 'next/image'
 import hamburger from '../../../assets/images/hamburger.svg'
@@ -27,7 +27,7 @@ export default function ServerChatroomSection({ serverChatCollection, handleTogg
       <div className="h-full w-full">
         { serverChatCollection.map((message: any) => {
           return (
-            <div key={uuid()}>
+            <div key={v4()}>
                 { message }
             </div>
           )

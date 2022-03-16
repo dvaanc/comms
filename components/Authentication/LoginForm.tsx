@@ -1,4 +1,4 @@
-import { signInWithEmailAndPassword } from 'firebase/auth'
+import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
@@ -12,6 +12,11 @@ interface LoginCredentialsProps {
 }
 export default function LoginForm() {
   const router = useRouter()
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if(user) return router.push(`/channels/@me`)
+    })
+  }, [])
   const [loginCredentials, setLoginCredentials] = useState({ email: '', password: ''} as LoginCredentialsProps)
 
 
