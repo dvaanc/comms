@@ -10,7 +10,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { auth, db, storage } from '../../backend/firebaseConfig'
 import { ref } from 'firebase/storage'
 import { useRouter } from 'next/router'
-import { doc, getDoc } from 'firebase/firestore'
+import { doc, getDoc, onSnapshot } from 'firebase/firestore'
 
 export default function Dashboard() {
   const router = useRouter()
@@ -36,23 +36,26 @@ export default function Dashboard() {
       if(!user || user === null) return router.push('/login')
     })
   }, [])
-  useEffect(() => {
-    console.log(currentUser)
-  }, [currentUser])
+  // useEffect(() => {
+  //   console.log(currentUser)
+  // }, [currentUser])
 
   useEffect(() => {
     const fetchUserInfo = async(uid: string) => {
       const storageRef = ref(storage, `user-assets/${uid}/userProfile.png`)
       const profileSnap = await getDoc(doc(db, 'user-collection', uid))
       if(profileSnap.exists()) {
-        const { username, tag, profileUrl } = profileSnap.data()
-        const profile = await fetch(profileUrl).then(res => res.blob()).then(blob => URL.createObjectURL(blob))
+        const { username, tag, profile } = profileSnap.data()
+        // const profile = await fetch(profileUrl).then(res => res.blob()).then(blob => URL.createObjectURL(blob))
+        console.log(profileSnap.data())
         setCurrentUser({ ...currentUser, username, tag, profile })
       }
       console.log('No user found')
     }
     if(isLoaded) fetchUserInfo(currentUser.uid) 
-
+    // onSnapshot(doc(db, 'server-collection'), (doc) => { 
+    //   console.log(doc.data())
+    // })
   }, [isLoaded])
   const handleToggleSidebar = () => {
     hideSidebar ? 
@@ -84,7 +87,7 @@ export default function Dashboard() {
         <ServerChannelListBar handleToggleSidebar={handleToggleSidebar} currentUser={currentUser} />
       </div>
         <ServerChatroomSection hideSidebar={hideSidebar} handleToggleSidebar={handleToggleSidebar} serverChatCollection={serverChatCollection} />
-        <Overlay hideOverlay={hideOverlay} handleToggleOverlay={handleToggleOverlay} />
+        <Overlay hideOverlay={hideOverlay} handleToggleOverlay={handleToggleOverlay} uid={currentUser.uid} />
         <button onClick={ () => { signOut(auth); router.push('/login') } }className="fixed w-[50px] h-[50px] bottom-1 left-3 bg-red-900 rounded-full">
           Logout
         </button>

@@ -55,7 +55,7 @@ export default function RegisterForm() {
       const storageRef = ref(storage, `user-assets/${userRef.user.uid}/userProfile.png`)
       const tag = Math.floor(Math.random() * 8999) + 1000
       await uploadBytes(storageRef, profile.src)
-      await setDoc(doc(db, "user-collection", `${userRef.user.uid}`), { email, username, tag })
+      await setDoc(doc(db, "user-collection", `${userRef.user.uid}`), { email, username, tag, serverList: [] })
       await getDownloadURL(storageRef).then((url) => { setDoc(doc(db, 'user-collection', userRef.user.uid), { profile: url }, { merge: true }) })
       router.push('/channels/@me')
 

@@ -8,9 +8,10 @@ import { v4 } from 'uuid'
 import { createCategory, createChannel } from '../../backend/Utility'
 interface OverlayProps {
   hideOverlay: boolean
-  handleToggleOverlay(e: React.MouseEvent): void
+  handleToggleOverlay(e: React.MouseEvent): void,
+  uid: string,
 }
-export default function Overlay({ hideOverlay, handleToggleOverlay }: OverlayProps) {
+export default function Overlay({ hideOverlay, handleToggleOverlay, uid }: OverlayProps) {
   const [serverValue, setServerValue] = useState({ serverName: '', serverJoin: '', actionType: '' })
   const [errors, setErrors] = useState({ serverName: { isError: false, message: ''}, serverJoin: { isError: false, message: '' } })
   const handleInputChange = (e: { target: HTMLInputElement }): void => {

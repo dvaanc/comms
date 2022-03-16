@@ -38,8 +38,8 @@ export default function ServerChannelListBar({ handleToggleSidebar, currentUser 
       </section>
       <section className="w-100 min-h-[58px] pl-4 pr-4 flex items-center justify-between bg-[#292b2f]">
         <div className="flex flex-row gap-2 items-center">
-          <span className="h-[32px] w-[32px] rounded-full cursor-pointer">
-            {/* { profile && <Image src={profile} height="32px" width="32px" alt="profile picture" />} */}
+          <span className="h-[34px] w-[34px] rounded-full cursor-pointer overflow-hidden">
+            { profile && <Image src={profile} height="32px" width="32px" layout="responsive" alt="profile picture" />}
             
           </span>
           <span className="flex flex-col tracking-wide pt-2 cursor-pointer">

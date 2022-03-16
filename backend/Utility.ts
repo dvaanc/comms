@@ -1,4 +1,4 @@
-import { doc, setDoc } from 'firebase/firestore';
+import { arrayUnion, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { v4 } from 'uuid'
 import { db } from './firebaseConfig';
 
@@ -62,5 +62,11 @@ const createChannel = async(serverId: string, channelType: string, categoryName:
 //     doc(db,`server-collection/${serverId}/${channelType}/${categoryName}/channels/${channelName}`,  )
 //   )
 // }
+
+const addServerToUser = async(userUid: string, serverId: string) => {
+  await updateDoc(
+    doc(db, 'user-collection', userUid), { serverList: arrayUnion(serverId) }
+  )
+}
 
 export { createChannelsFirebase, createCategory, createChannel }

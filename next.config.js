@@ -13,5 +13,8 @@ module.exports = {
     firebase_messagingSenderId: '809737978955',
     firebase_appId: '1:809737978955:web:19c56d864cbbfe614bb9ce',
     firebase_measurementId: 'G-TTH0Q09DT4',
-  }
+  },
+  images: {
+    domains: ['firebasestorage.googleapis.com'],
+  },
 }
