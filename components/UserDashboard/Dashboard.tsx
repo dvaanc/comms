@@ -19,6 +19,7 @@ export default function Dashboard() {
     username: '' as string,
     tag: null as null | number,
     profile: null as any,
+    serverList: [] as Array<string>
   })
   const [isLoaded, setIsLoaded] = useState(false)
   const [hideSidebar, setHideSibebar] = useState(false as boolean)
@@ -36,9 +37,6 @@ export default function Dashboard() {
       if(!user || user === null) return router.push('/login')
     })
   }, [])
-  // useEffect(() => {
-  //   console.log(currentUser)
-  // }, [currentUser])
 
   useEffect(() => {
     const fetchUserInfo = async(uid: string) => {
@@ -46,21 +44,34 @@ export default function Dashboard() {
       const profileSnap = await getDoc(doc(db, 'user-collection', uid))
       if(profileSnap.exists()) {
         const { username, tag, profile } = profileSnap.data()
-        // const profile = await fetch(profileUrl).then(res => res.blob()).then(blob => URL.createObjectURL(blob))
-        console.log(profileSnap.data())
         setCurrentUser({ ...currentUser, username, tag, profile })
+        return
       }
       console.log('No user found')
     }
-    if(isLoaded) fetchUserInfo(currentUser.uid) 
-    // onSnapshot(doc(db, 'server-collection'), (doc) => { 
-    //   console.log(doc.data())
-    // })
+    if(isLoaded) { 
+      return () => fetchUserInfo(currentUser.uid) 
+    
+    }
   }, [isLoaded])
+  useEffect(() => {
+    if(currentUser.uid === null) return
+    const unsub = onSnapshot(doc(db, 'user-collection', currentUser.uid), (doc) => { 
+      const data = doc.data(      )
+      setCurrentUser({...currentUser, serverList: [...data.serverList]})
+    })
+    return () => unsub()
+  })
+
+  // useEffect(() => {
+  //   console.log(currentUser)
+  // }, [current])
+
   const handleToggleSidebar = () => {
     hideSidebar ? 
       setHideSibebar(false) : setHideSibebar(true)
   }
+
   const handleToggleOverlay = (e: React.MouseEvent) => {
     e.stopPropagation()
     const target = e.target as HTMLElement

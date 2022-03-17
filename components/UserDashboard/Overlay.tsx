@@ -5,7 +5,7 @@ import arrow from '../../assets/images/arrow.png'
 import { doc, setDoc, Timestamp } from 'firebase/firestore'
 import { db } from '../../backend/firebaseConfig'
 import { v4 } from 'uuid'
-import { createCategory, createChannel } from '../../backend/Utility'
+import { addServerToUser, createCategory, createChannel } from '../../backend/Utility'
 interface OverlayProps {
   hideOverlay: boolean
   handleToggleOverlay(e: React.MouseEvent): void,
@@ -40,6 +40,7 @@ export default function Overlay({ hideOverlay, handleToggleOverlay, uid }: Overl
     createCategory(serverId, 'voice-channels', 'voice-channels')
     createChannel(serverId, 'text-channels', 'text-channels', 'general')
     createChannel(serverId, 'voice-channels', 'voice-channels', 'general')
+    addServerToUser(uid, serverId)
   } 
 
   const joinServer = () => {

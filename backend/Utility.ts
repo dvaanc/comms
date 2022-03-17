@@ -69,4 +69,4 @@ const addServerToUser = async(userUid: string, serverId: string) => {
   )
 }
 
-export { createChannelsFirebase, createCategory, createChannel }
+export { createChannelsFirebase, createCategory, createChannel, addServerToUser }
