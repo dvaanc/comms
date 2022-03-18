@@ -10,13 +10,17 @@ interface LoginCredentialsProps {
   email: string,
   password: string,
 }
-export default function LoginForm() {
+export default function LoginForm({ user, addUser }: any) {
   const router = useRouter()
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if(user) return router.push(`/channels/@me`)
-    })
-  }, [])
+  // useEffect(() => {
+  //   onAuthStateChanged(auth, (user) => {
+  //     // if(user) return router.push(`/channels/@me`)
+  //     if(user) addUser(user.uid)
+  //   })
+  // }, [])
+  // useEffect(() => {
+  //   console.log(user)
+  // }, [user])
   const [loginCredentials, setLoginCredentials] = useState({ email: '', password: ''} as LoginCredentialsProps)
 
 

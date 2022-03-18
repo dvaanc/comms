@@ -9,9 +9,16 @@ interface State {
   profile: string,
   serverList: Array<string>
 }
-type Dispatch = () => void
-type AddUser = (uid: string) => void
-const UserContext = createContext<{state: State; dispatch: Dispatch, addUser: AddUser } | undefined>(undefined)
+// type Dispatch = () => void
+// type AddUser = (uid: string) => void
+interface User {
+  uid: string,
+  username: string,
+  tag: number,
+  profile: string,
+  serverList: Array<string>
+}
+
 
 export default function UserState( children: React.FC) {
   const [user, setUser] = useState({
@@ -20,7 +27,7 @@ export default function UserState( children: React.FC) {
     tag: 0, 
     profile: '',
     serverList: [],
-  } as State)
+  } as User)
 
   const addUser = async(userId: string) => {
     setUser({...user, uid: userId}) 
@@ -41,8 +48,9 @@ export default function UserState( children: React.FC) {
   const value = { user, setUser, addUser}
 
   return (
-    <UserContext.Provider value={value}>
-      { children }
-    </UserContext.Provider>
+    <div></div>
+  //   <UserContext.Provider value={{ user, setUser, addUser }}>
+  //     { children }
+  //   </UserContext.Provider>
   )
 }

@@ -11,8 +11,9 @@ import { auth, db, storage } from '../../backend/firebaseConfig'
 import { ref } from 'firebase/storage'
 import { useRouter } from 'next/router'
 import { doc, getDoc, onSnapshot } from 'firebase/firestore'
+import { UserProps } from '../../pages/_app'
 
-export default function Dashboard() {
+export default function Dashboard(user: any) {
   const router = useRouter()
   const [currentUser, setCurrentUser] = useState({ 
     uid: null as null | any,
@@ -50,22 +51,22 @@ export default function Dashboard() {
       console.log('No user found')
     }
     if(isLoaded) { 
-      return () => fetchUserInfo(currentUser.uid) 
+      fetchUserInfo(currentUser.uid) 
     
     }
   }, [isLoaded])
-  useEffect(() => {
-    if(currentUser.uid === null) return
-    const unsub = onSnapshot(doc(db, 'user-collection', currentUser.uid), (doc) => { 
-      const data = doc.data(      )
-      setCurrentUser({...currentUser, serverList: [...data.serverList]})
-    })
-    return () => unsub()
-  })
+  // useEffect(() => {
+  //   if(currentUser.uid === null) return
+  //   const unsub = onSnapshot(doc(db, 'user-collection', currentUser.uid), (doc) => { 
+  //     const data = doc.data( )
+  //     if(data !== undefined ) setCurrentUser({...currentUser, serverList: [...data.serverList]})
+  //   })
+  //   return () => unsub()
+  // })
 
   // useEffect(() => {
   //   console.log(currentUser)
-  // }, [current])
+  // }, )
 
   const handleToggleSidebar = () => {
     hideSidebar ? 
