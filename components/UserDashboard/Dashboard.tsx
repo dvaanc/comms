@@ -14,6 +14,7 @@ import { doc, getDoc, onSnapshot } from 'firebase/firestore'
 import { UserProps } from '../../pages/_app'
 
 export default function Dashboard(user: any) {
+  const { serverCollection } = user
   const router = useRouter()
   const [currentUser, setCurrentUser] = useState({ 
     uid: null as null | any,
@@ -25,7 +26,6 @@ export default function Dashboard(user: any) {
   const [isLoaded, setIsLoaded] = useState(false)
   const [hideSidebar, setHideSibebar] = useState(false as boolean)
   const [hideOverlay, setHideOverlay] = useState(true as boolean)
-  const [serverCollection, setServerCollection] = useState([] as Array<any>)
   const [serverChatCollection, setServerrChatCollection] = useState([])
   const [voiceControl, setVoiceControl] = useState({ 
     mute: false, 

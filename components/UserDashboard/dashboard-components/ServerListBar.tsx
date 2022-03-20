@@ -7,11 +7,11 @@ interface ServerListBar {
 export default function ServerListBar({ serverCollection, handleToggleOverlay }:  ServerListBar) {
   return (
     <section className="flex flex-col gap-2 min-w-[72px] h-full bg-[#202225] pt-2 pb-2">
-    { serverCollection.map((server: any) => {
+    { serverCollection && serverCollection.map((server: any) => {
       return (
       <div className="flex flex-row items-center w-100" key={v4()}>
         <span className="height-[7px] width-[8px] ml-[-5px] bg-white rounded-full "/>
-        <button className="sidebar-btn">test</button>
+        <button className="sidebar-btn">{ server.serverName }</button>
       </div>
         )
     })}

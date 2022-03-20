@@ -8,12 +8,12 @@ import { useRouter } from 'next/router';
 import { Props } from './_app';
 
 const Login: NextPage = ({ user, addUser }: any) => {
-  const router = useRouter()
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if(user) addUser(user.uid) ; router.push(`/dashboard`)
-    })
-  }, [])
+  // const router = useRouter()
+  // useEffect(() => {
+  //   onAuthStateChanged(auth, (user) => {
+  //     if(user) addUser(user.uid) ; router.push(`/dashboard`)
+  //   })
+  // }, [])
   return (
     <div className="flex flex-col h-screen w-screen justify-center items-center">
       <ParticleEffects />
