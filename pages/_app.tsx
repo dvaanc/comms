@@ -9,7 +9,7 @@ import { onAuthStateChanged } from 'firebase/auth'
 export interface UserProps {
   uid: string,
   username: string,
-  tag: number,
+  tag: string,
   profile: string,
   serverList: Array<string>
   serverCollection: Array<any>
@@ -19,7 +19,7 @@ export interface Props {
   user: {
     uid: string,
     username: string,
-    tag: number, 
+    tag: string, 
     profile: string,
     serverList: Array<string>,
     serverCollection: Array<any>
@@ -29,7 +29,14 @@ export interface Props {
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter()
-  const [user, setUser] = useState(undefined as UserProps | undefined)
+  const [user, setUser] = useState({
+    uid: '',
+    username: '',
+    tag: '',
+    profile: '',
+    serverList: [],
+    serverCollection: []
+  } as UserProps)
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -39,14 +46,18 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [])
 
   useEffect(() => {
-    if(user && user.serverList) {
+    if(user && user.serverList.length > 0) {
       const serversRef = collection(db, 'server-collection')
       const q = query(serversRef, where('serverID', 'in', [...user.serverList]))
       const unsubscribe = onSnapshot(q, (snap) => {
-        snap.docs.forEach((doc) => {  } )
+        const newServerCollection = [] as Array<any>
+        snap.docs.forEach((doc) => { 
+          newServerCollection.push(doc.data())
+        })
+        setUser({...user, serverCollection: [...newServerCollection]})
       })
     }
-  }, [user])
+  }, [])
 
   const addUser = async(userId: string) => {
     try {
@@ -54,10 +65,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       if(profileSnap.exists()) {
         const { username, tag, profile, serverList } = profileSnap.data()
         const serverCollection = [] as Array<any>
-        // const serversRef = collection(db, "server-collection")
-        // const q = query(serversRef, where('serverID', 'in', [...serverList]))
-        // const qSnapshot = await getDocs(q)
-        //   qSnapshot.forEach((doc) => { serverCollection.push(doc.data())})
+        const serversRef = collection(db, "server-collection")
+        const q = query(serversRef, where('serverID', 'in', [...serverList]))
+        const qSnapshot = await getDocs(q)
+          qSnapshot.forEach((doc) => { serverCollection.push(doc.data())})
         setUser({ ...user, uid: userId, username, tag, profile, serverList, serverCollection })
         return
       }
@@ -69,7 +80,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   }
   useEffect(() => {
     console.log(user)
-  }, [user])
+  },  [user])
 
   return (
     <Component 

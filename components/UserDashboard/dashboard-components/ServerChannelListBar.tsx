@@ -9,10 +9,10 @@ import cross from '../../../assets/images/cross.svg'
 
 interface ServerChannelListBarProps {
   handleToggleSidebar(e: React.MouseEvent ): void,
-  currentUser: any,
+  user: any,
 }
-export default function ServerChannelListBar({ handleToggleSidebar, currentUser }: ServerChannelListBarProps) {
-  const { username, profile, tag } = currentUser
+export default function ServerChannelListBar({ handleToggleSidebar, user }: ServerChannelListBarProps) {
+  const { username, profile, tag } = user
   return (
     <main className="flex flex-col min-w-[246px] bg-[#2f3136] h-full">
       <section className="min-h-[56px] pr-4 flex items-center justify-between text-white font-medium text-m tracking-medium shadow-bottom">

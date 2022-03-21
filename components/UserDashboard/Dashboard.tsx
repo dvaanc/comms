@@ -13,8 +13,8 @@ import { useRouter } from 'next/router'
 import { doc, getDoc, onSnapshot } from 'firebase/firestore'
 import { UserProps } from '../../pages/_app'
 
-export default function Dashboard(user: any) {
-  const { serverCollection } = user
+
+export default function Dashboard({ user }: any) {
   const router = useRouter()
   const [currentUser, setCurrentUser] = useState({ 
     uid: null as null | any,
@@ -32,29 +32,33 @@ export default function Dashboard(user: any) {
     deafen: false,
     image: { }
   })
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if(user) setCurrentUser({...currentUser, uid: user.uid}) ; setIsLoaded(true)
-      if(!user || user === null) return router.push('/login')
-    })
-  }, [])
 
-  useEffect(() => {
-    const fetchUserInfo = async(uid: string) => {
-      const storageRef = ref(storage, `user-assets/${uid}/userProfile.png`)
-      const profileSnap = await getDoc(doc(db, 'user-collection', uid))
-      if(profileSnap.exists()) {
-        const { username, tag, profile } = profileSnap.data()
-        setCurrentUser({ ...currentUser, username, tag, profile })
-        return
-      }
-      console.log('No user found')
-    }
-    if(isLoaded) { 
-      fetchUserInfo(currentUser.uid) 
+    useEffect(() => {
+      console.log(user)
+    }, [user])
+  // useEffect(() => {
+  //   onAuthStateChanged(auth, (user) => {
+  //     if(user) setCurrentUser({...currentUser, uid: user.uid}) ; setIsLoaded(true)
+  //     if(!user || user === null) return router.push('/login')
+  //   })
+  // }, [])
+
+  // useEffect(() => {
+  //   const fetchUserInfo = async(uid: string) => {
+  //     const storageRef = ref(storage, `user-assets/${uid}/userProfile.png`)
+  //     const profileSnap = await getDoc(doc(db, 'user-collection', uid))
+  //     if(profileSnap.exists()) {
+  //       const { username, tag, profile } = profileSnap.data()
+  //       setCurrentUser({ ...currentUser, username, tag, profile })
+  //       return
+  //     }
+  //     console.log('No user found')
+  //   }
+  //   if(isLoaded) { 
+  //     fetchUserInfo(currentUser.uid) 
     
-    }
-  }, [isLoaded])
+  //   }
+  // }, [isLoaded])
   // useEffect(() => {
   //   if(currentUser.uid === null) return
   //   const unsub = onSnapshot(doc(db, 'user-collection', currentUser.uid), (doc) => { 
@@ -95,11 +99,11 @@ export default function Dashboard(user: any) {
   return (
     <div className="inline-flex flex-row h-screen w-screen bg-white fixed">
       <div className={`inline-flex flex-row ${ hideSidebar ? `-ml-[318px]` : ``} transition-[margin] duration-600ms z-0`} onDrag={handleDrag} id="sidepanel">
-        <ServerListBar serverCollection={serverCollection} handleToggleOverlay={handleToggleOverlay}/>
-        <ServerChannelListBar handleToggleSidebar={handleToggleSidebar} currentUser={currentUser} />
+        <ServerListBar serverCollection={user.serverCollection} handleToggleOverlay={handleToggleOverlay}/>
+        <ServerChannelListBar handleToggleSidebar={handleToggleSidebar} user={user} />
       </div>
         <ServerChatroomSection hideSidebar={hideSidebar} handleToggleSidebar={handleToggleSidebar} serverChatCollection={serverChatCollection} />
-        <Overlay hideOverlay={hideOverlay} handleToggleOverlay={handleToggleOverlay} uid={currentUser.uid} />
+        <Overlay hideOverlay={hideOverlay} handleToggleOverlay={handleToggleOverlay} uid={user.uid} />
         <button onClick={ () => { signOut(auth); router.push('/login') } }className="fixed w-[50px] h-[50px] bottom-1 left-3 bg-red-900 rounded-full">
           Logout
         </button>

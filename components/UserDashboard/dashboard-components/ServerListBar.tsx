@@ -1,17 +1,21 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { v4 } from 'uuid'
 interface ServerListBar {
   serverCollection: any,
   handleToggleOverlay(e: React.MouseEvent): void
 }
 export default function ServerListBar({ serverCollection, handleToggleOverlay }:  ServerListBar) {
+  useEffect(() => {
+    console.log(serverCollection)
+  }, [serverCollection])
   return (
     <section className="flex flex-col gap-2 min-w-[72px] h-full bg-[#202225] pt-2 pb-2">
     { serverCollection && serverCollection.map((server: any) => {
+      const initials = server.serverName.split(' ').map((str: string) => str.substring(0, 1))
       return (
-      <div className="flex flex-row items-center w-100" key={v4()}>
+      <div className="flex flex-row items-center w-100" key={v4()} data-serverid={ server.serverID }>
         <span className="height-[7px] width-[8px] ml-[-5px] bg-white rounded-full "/>
-        <button className="sidebar-btn">{ server.serverName }</button>
+        <button className="sidebar-btn">{ initials }</button>
       </div>
         )
     })}
