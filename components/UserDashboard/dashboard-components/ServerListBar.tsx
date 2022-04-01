@@ -2,9 +2,15 @@ import React, { useEffect } from 'react'
 import { v4 } from 'uuid'
 interface ServerListBar {
   serverCollection: any,
-  handleToggleOverlay(e: React.MouseEvent): void
+  handleToggleOverlay(e: React.MouseEvent): void,
+  handleSetCurrentServer(serverId: string): Promise<void>,
 }
-export default function ServerListBar({ serverCollection, handleToggleOverlay }:  ServerListBar) {
+export default function ServerListBar({ serverCollection, handleToggleOverlay, handleSetCurrentServer }:  ServerListBar) {
+  const handleServerClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement
+    const serverId = (target.parentNode as HTMLElement).dataset.serverid
+    if(serverId) handleSetCurrentServer(serverId)
+  }
   useEffect(() => {
     console.log(serverCollection)
   }, [serverCollection])
@@ -15,7 +21,7 @@ export default function ServerListBar({ serverCollection, handleToggleOverlay }:
       return (
       <div className="flex flex-row items-center w-100" key={v4()} data-serverid={ server.serverID }>
         <span className="height-[7px] width-[8px] ml-[-5px] bg-white rounded-full "/>
-        <button className="sidebar-btn">{ initials }</button>
+        <button onClick={handleServerClick} data-id="test" className="sidebar-btn text-white select-none">{ initials }</button>
       </div>
         )
     })}

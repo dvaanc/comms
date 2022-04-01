@@ -10,7 +10,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { auth, db, storage } from '../../backend/firebaseConfig'
 import { ref } from 'firebase/storage'
 import { useRouter } from 'next/router'
-import { doc, getDoc, onSnapshot } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, onSnapshot } from 'firebase/firestore'
 import { UserProps } from '../../pages/_app'
 
 
@@ -26,16 +26,74 @@ export default function Dashboard({ user }: any) {
   const [isLoaded, setIsLoaded] = useState(false)
   const [hideSidebar, setHideSibebar] = useState(false as boolean)
   const [hideOverlay, setHideOverlay] = useState(true as boolean)
-  const [serverChatCollection, setServerrChatCollection] = useState([])
-  const [voiceControl, setVoiceControl] = useState({ 
-    mute: false, 
-    deafen: false,
-    image: { }
+  const [serverChatCollection, setServerChatCollection] = useState([])
+  const [voiceControl, setVoiceControl] = useState({ mute: false, deafen: false, image: { } })
+  const [currentServer, setCurrentServer] = useState({
+    channels: {
+      
+    }
   })
-
     useEffect(() => {
       console.log(user)
     }, [user])
+
+  const handleToggleSidebar = () => {
+    hideSidebar ? 
+      setHideSibebar(false) : setHideSibebar(true)
+  }
+
+  const handleToggleOverlay = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const target = e.target as HTMLElement
+    if(target.id === 'new-server') return setHideOverlay(false)
+    if(target.id ==='close-new-server') return setHideOverlay(true)
+    if(target.id === 'overlay') return setHideOverlay(true)
+    // hideOverlay ?
+    //   setHideOverlay(false) : setHideOverlay(true)
+  }
+  const selectServer = () => {
+    console.log('server clicked')
+  }
+  const toggleVoiceControl = (e: ClickEvent): void => { 
+
+  }
+  const handleDrag = (e: React.MouseEvent) => {
+    const target = e.target as HTMLDivElement
+    console.log('drag')
+  }
+  const handleSetCurrentServer = async (serverId: string): Promise<void> => {
+    console.log(serverId)
+    const serverTextChannelsRef = collection(db, `server-collection/${serverId}/text-channels/text-channels/channels`)
+    const serverVoiceChannelsRef = collection(db, `server-collection/${serverId}/voice-channels/voice-channels/channels`)
+    const serverTextChannelsSnap = await getDocs(serverTextChannelsRef)
+    const serverVoiceChannelsSnap = await getDocs(serverVoiceChannelsRef)
+    serverTextChannelsSnap.forEach((doc) => {
+      console.log(doc.id)
+    })
+    serverVoiceChannelsSnap.forEach((doc) => {
+      console.log(doc.id)
+    })
+    
+  }
+  return (
+    <div className="inline-flex flex-row h-screen w-screen bg-white fixed">
+      <div className={`inline-flex flex-row ${ hideSidebar ? `-ml-[318px]` : ``} transition-[margin] duration-600ms z-0`} onDrag={handleDrag} id="sidepanel">
+        <ServerListBar 
+          serverCollection={user.serverCollection} 
+          handleToggleOverlay={handleToggleOverlay}
+          handleSetCurrentServer={handleSetCurrentServer}
+        />
+        <ServerChannelListBar handleToggleSidebar={handleToggleSidebar} user={user} />
+      </div>
+        <ServerChatroomSection hideSidebar={hideSidebar} handleToggleSidebar={handleToggleSidebar} serverChatCollection={serverChatCollection} />
+        <Overlay hideOverlay={hideOverlay} handleToggleOverlay={handleToggleOverlay} uid={user.uid} />
+        <button onClick={ () => { signOut(auth); router.push('/login') } }className="fixed w-[50px] h-[50px] bottom-1 left-3 bg-red-900 rounded-full">
+          Logout
+        </button>
+    </div>
+  )
+}
+
   // useEffect(() => {
   //   onAuthStateChanged(auth, (user) => {
   //     if(user) setCurrentUser({...currentUser, uid: user.uid}) ; setIsLoaded(true)
@@ -71,42 +129,3 @@ export default function Dashboard({ user }: any) {
   // useEffect(() => {
   //   console.log(currentUser)
   // }, )
-
-  const handleToggleSidebar = () => {
-    hideSidebar ? 
-      setHideSibebar(false) : setHideSibebar(true)
-  }
-
-  const handleToggleOverlay = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    const target = e.target as HTMLElement
-    if(target.id === 'new-server') return setHideOverlay(false)
-    if(target.id ==='close-new-server') return setHideOverlay(true)
-    if(target.id === 'overlay') return setHideOverlay(true)
-    // hideOverlay ?
-    //   setHideOverlay(false) : setHideOverlay(true)
-  }
-  const selectServer = () => {
-    console.log('server clicked')
-  }
-  const toggleVoiceControl = (e: ClickEvent): void => { 
-
-  }
-  const handleDrag = (e: React.MouseEvent) => {
-    const target = e.target as HTMLDivElement
-    console.log('drag')
-  }
-  return (
-    <div className="inline-flex flex-row h-screen w-screen bg-white fixed">
-      <div className={`inline-flex flex-row ${ hideSidebar ? `-ml-[318px]` : ``} transition-[margin] duration-600ms z-0`} onDrag={handleDrag} id="sidepanel">
-        <ServerListBar serverCollection={user.serverCollection} handleToggleOverlay={handleToggleOverlay}/>
-        <ServerChannelListBar handleToggleSidebar={handleToggleSidebar} user={user} />
-      </div>
-        <ServerChatroomSection hideSidebar={hideSidebar} handleToggleSidebar={handleToggleSidebar} serverChatCollection={serverChatCollection} />
-        <Overlay hideOverlay={hideOverlay} handleToggleOverlay={handleToggleOverlay} uid={user.uid} />
-        <button onClick={ () => { signOut(auth); router.push('/login') } }className="fixed w-[50px] h-[50px] bottom-1 left-3 bg-red-900 rounded-full">
-          Logout
-        </button>
-    </div>
-  )
-}

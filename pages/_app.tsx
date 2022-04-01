@@ -37,6 +37,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     serverList: [],
     serverCollection: []
   } as UserProps)
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -44,9 +45,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       if(!user) router.push('/login')
     })
   }, [])
-
   useEffect(() => {
-    if(user && user.serverList.length > 0) {
+    const fetchServers = () => {
+      if(user && user.serverList.length > 0) {
       const serversRef = collection(db, 'server-collection')
       const q = query(serversRef, where('serverID', 'in', [...user.serverList]))
       const unsubscribe = onSnapshot(q, (snap) => {
@@ -56,7 +57,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         })
         setUser({...user, serverCollection: [...newServerCollection]})
       })
+          }
     }
+    return () => fetchServers()
   }, [])
 
   const addUser = async(userId: string) => {
