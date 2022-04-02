@@ -29,13 +29,23 @@ export default function Dashboard({ user }: any) {
   const [serverChatCollection, setServerChatCollection] = useState([])
   const [voiceControl, setVoiceControl] = useState({ mute: false, deafen: false, image: { } })
   const [currentServer, setCurrentServer] = useState({
+    serverData: {
+      creationDate: '' as any,
+      serverName: '' as any,
+      serverId: '' as any,
+    },
     channels: {
-      
+      textChannels: {
+
+      },
+      // voiceChannels: {
+
+      // }
     }
   })
     useEffect(() => {
-      console.log(user)
-    }, [user])
+      console.log(currentServer)
+    }, [currentServer])
 
   const handleToggleSidebar = () => {
     hideSidebar ? 
@@ -62,18 +72,47 @@ export default function Dashboard({ user }: any) {
     console.log('drag')
   }
   const handleSetCurrentServer = async (serverId: string): Promise<void> => {
-    console.log(serverId)
+    const serverRef = doc(db, `server-collection`,  serverId)
+    const serverSnap = await getDoc(serverRef)
+    const serverData = {...serverSnap.data()}
     const serverTextChannelsRef = collection(db, `server-collection/${serverId}/text-channels/text-channels/channels`)
-    const serverVoiceChannelsRef = collection(db, `server-collection/${serverId}/voice-channels/voice-channels/channels`)
+    const serverTextCategoriesRef = collection(db, `server-collection/${serverId}/text-channels/`)    
     const serverTextChannelsSnap = await getDocs(serverTextChannelsRef)
-    const serverVoiceChannelsSnap = await getDocs(serverVoiceChannelsRef)
-    serverTextChannelsSnap.forEach((doc) => {
-      console.log(doc.id)
+    const serverTextCategoriesSnap = await getDocs(serverTextCategoriesRef)
+    const categoriesList = [] as Array<any>
+    const categoriesAndChannels = [] as Array<any>
+    serverTextCategoriesSnap.forEach(async (doc) =>  {
+      const { categoryId } = doc.data()
+      const categoryName: string = doc.id
+      const categoryCollection = { categoryId, categoryName, channelList: [] as Array<any> }
+      const channelCollectionRef = collection(db, `server-collection/${serverId}/text-channels/${categoryName}/channels/`)
+      const channelCollectionSnap = await getDocs(channelCollectionRef)
+        channelCollectionSnap.forEach((doc) => {
+          const { channelId } = doc.data()
+          const channelName = doc.id
+          const channelObj = { channelId, channelName }
+          categoryCollection.channelList.push(channelObj)
+        })
+        categoriesAndChannels.push(categoryCollection)
     })
-    serverVoiceChannelsSnap.forEach((doc) => {
-      console.log(doc.id)
+    console.log(categoriesAndChannels)
+    setCurrentServer({
+      serverData: {
+        ...serverData
+      },
+      channels: {
+        textChannels: [
+          categoriesAndChannels
+        ]
+      }
     })
-    
+    // console.log(categoriesList)
+    // serverTextChannelsSnap.forEach((doc) => {
+    //   console.log(doc.id)
+    // })
+    // serverVoiceChannelsSnap.forEach((doc) => {
+    //   console.log(doc.id)
+    // })
   }
   return (
     <div className="inline-flex flex-row h-screen w-screen bg-white fixed">
@@ -83,7 +122,11 @@ export default function Dashboard({ user }: any) {
           handleToggleOverlay={handleToggleOverlay}
           handleSetCurrentServer={handleSetCurrentServer}
         />
-        <ServerChannelListBar handleToggleSidebar={handleToggleSidebar} user={user} />
+        <ServerChannelListBar 
+          user={user} 
+          handleToggleSidebar={handleToggleSidebar}
+          currentServer={currentServer}
+        />
       </div>
         <ServerChatroomSection hideSidebar={hideSidebar} handleToggleSidebar={handleToggleSidebar} serverChatCollection={serverChatCollection} />
         <Overlay hideOverlay={hideOverlay} handleToggleOverlay={handleToggleOverlay} uid={user.uid} />

@@ -48,7 +48,7 @@ const createCategory = async(serverId: string, channelType: string, categoryName
 }
 const createChannel = async(serverId: string, channelType: string, categoryName: string, channelName: string): Promise<void> => {
   await setDoc(
-    doc(db, `server-collection/${serverId}/${channelType}/${categoryName}/channels/`, channelName), { categoryId: v4() })
+    doc(db, `server-collection/${serverId}/${channelType}/${categoryName}/channels/`, channelName), { channelId: v4() })
 }
 // const createMessage = async(
 //   serverId: string, 

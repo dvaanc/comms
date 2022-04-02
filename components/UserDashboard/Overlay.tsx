@@ -29,7 +29,7 @@ export default function Overlay({ hideOverlay, handleToggleOverlay, uid }: Overl
       const serverRef = await setDoc(doc(db, 'server-collection', serverId),  {
         serverName: serverValue.serverName,
         creationDate: Timestamp.now(),
-        serverID: serverId,
+        serverId: serverId,
       })
     } catch(err)  {
       if(err instanceof Error) return console.log(err)

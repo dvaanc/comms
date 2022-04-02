@@ -8,10 +8,12 @@ import settings from '../../../assets/images/settings.svg'
 import cross from '../../../assets/images/cross.svg'
 
 interface ServerChannelListBarProps {
-  handleToggleSidebar(e: React.MouseEvent ): void,
   user: any,
+  handleToggleSidebar(e: React.MouseEvent ): void,
+  currentServer: any,
+
 }
-export default function ServerChannelListBar({ handleToggleSidebar, user }: ServerChannelListBarProps) {
+export default function ServerChannelListBar({  user, currentServer, handleToggleSidebar, }: ServerChannelListBarProps) {
   const { username, profile, tag } = user
   return (
     <main className="flex flex-col min-w-[246px] bg-[#2f3136] h-full">

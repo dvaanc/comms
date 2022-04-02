@@ -49,7 +49,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     const fetchServers = () => {
       if(user && user.serverList.length > 0) {
       const serversRef = collection(db, 'server-collection')
-      const q = query(serversRef, where('serverID', 'in', [...user.serverList]))
+      const q = query(serversRef, where('serverId', 'in', [...user.serverList]))
       const unsubscribe = onSnapshot(q, (snap) => {
         const newServerCollection = [] as Array<any>
         snap.docs.forEach((doc) => { 
