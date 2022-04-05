@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import hash from '../../../assets/images/hash.svg'
 import chevronSouth from '../../../assets/images/chevron-south.svg'
@@ -6,7 +6,7 @@ import unmute from '../../../assets/images/unmute.svg'
 import undeafen from '../../../assets/images/undeafen.svg'
 import settings from '../../../assets/images/settings.svg'
 import cross from '../../../assets/images/cross.svg'
-
+import { v4 } from 'uuid'
 interface ServerChannelListBarProps {
   user: any,
   handleToggleSidebar(e: React.MouseEvent ): void,
@@ -15,11 +15,24 @@ interface ServerChannelListBarProps {
 }
 export default function ServerChannelListBar({  user, currentServer, handleToggleSidebar, }: ServerChannelListBarProps) {
   const { username, profile, tag } = user
+  const [textChannels, setTextChannels] = useState(null as null || Array)
+  const [voiceChannels, setVoiceChannels] = useState([])
+  const { serverName, serverId, creationDate } = currentServer.serverData;
+  useEffect(() =>  {
+    if(currentServer.channels.textChannels[0] !== undefined) {
+      setTextChannels([...currentServer.channels.textChannels[0]])
+    }
+    console.log(currentServer)
+  }, [currentServer])
+  useEffect(() =>  {
+    console.log(textChannels)
+  }, [textChannels])
+  
   return (
     <main className="flex flex-col min-w-[246px] bg-[#2f3136] h-full">
       <section className="min-h-[56px] pr-4 flex items-center justify-between text-white font-medium text-m tracking-medium shadow-bottom">
         <div className="flex items-center gap-2 pl-4 pr-4 hover:bg-[#34373C] cursor-pointer h-full">
-          <h4>Server Test</h4>
+          <h4>{serverName !== null && serverName }</h4>
           
         </div>
         <div className="flex items-center cursor-pointer">
@@ -29,14 +42,22 @@ export default function ServerChannelListBar({  user, currentServer, handleToggl
         
       </section>
       <section className="flex flex-col pt-4 p-2 h-full">
-        <span className="flex items-center justify-start cursor-pointer uppercase">
-          <Image src={chevronSouth} alt="chevronSouth" width="18px" height="18px" />
-          <h5 className="text-xs text-[#72767D] hover:text-gray-300 font-bold">Text Channels</h5>
-        </span>
-        <span className="flex items-center w-100 h-8 p-2 hover:bg-[#34373C] rounded-md cursor-pointer text-[#72767D] hover:text-gray-200">
-          <Image src={hash} alt="hash" width="20px" height="20px"/>
-          <h5 className="ml-1 font-sm tracking-tight text-m">general</h5>
-        </span>
+        { textChannels !== null && textChannels.map((item) => {
+          return (
+            <div key={v4()} data-categoryid={ item.categoryId }>
+            <span className="flex items-center justify-start cursor-pointer uppercase">
+              <Image src={chevronSouth} alt="chevronSouth" width="18px" height="18px" />
+              <h5 className="text-xs text-[#72767D] hover:text-gray-300 font-bold">{ item.categoryName }</h5>
+            </span>
+            <span className="flex items-center w-100 h-8 p-2 hover:bg-[#34373C] rounded-md cursor-pointer text-[#72767D] hover:text-gray-200">
+              <Image src={hash} alt="hash" width="20px" height="20px"/>
+              <h5 className="ml-1 font-sm tracking-tight text-m">general</h5>
+            </span>
+          </div>
+          )
+        }) }
+
+
       </section>
       <section className="w-100 min-h-[58px] pl-4 pr-4 flex items-center justify-between bg-[#292b2f]">
         <div className="flex flex-row gap-2 items-center">

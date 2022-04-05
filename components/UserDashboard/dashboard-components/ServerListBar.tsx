@@ -11,15 +11,15 @@ export default function ServerListBar({ serverCollection, handleToggleOverlay, h
     const serverId = (target.parentNode as HTMLElement).dataset.serverid
     if(serverId) handleSetCurrentServer(serverId)
   }
-  useEffect(() => {
-    console.log(serverCollection)
-  }, [serverCollection])
+  // useEffect(() => {
+  //   console.log(serverCollection)
+  // }, [serverCollection])
   return (
     <section className="flex flex-col gap-2 min-w-[72px] h-full bg-[#202225] pt-2 pb-2">
     { serverCollection && serverCollection.map((server: any) => {
       const initials = server.serverName.split(' ').map((str: string) => str.substring(0, 1))
       return (
-      <div className="flex flex-row items-center w-100" key={v4()} data-serverid={ server.serverID }>
+      <div className="flex flex-row items-center w-100" key={v4()} data-serverid={ server.serverId }>
         <span className="height-[7px] width-[8px] ml-[-5px] bg-white rounded-full "/>
         <button onClick={handleServerClick} data-id="test" className="sidebar-btn text-white select-none">{ initials }</button>
       </div>

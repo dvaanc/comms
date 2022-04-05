@@ -12,7 +12,19 @@ import { ref } from 'firebase/storage'
 import { useRouter } from 'next/router'
 import { collection, doc, getDoc, getDocs, onSnapshot } from 'firebase/firestore'
 import { UserProps } from '../../pages/_app'
+interface ServerDataProps {
+  creationDate: {
+    nanoseconds: number,
+    seconds: number,
+  } | null,
+  serverName: null | string,
+  serverId: null | string,
+}
+interface ServerChannelProps {
+  textChannels: [
 
+  ]
+}
 
 export default function Dashboard({ user }: any) {
   const router = useRouter()
@@ -28,16 +40,17 @@ export default function Dashboard({ user }: any) {
   const [hideOverlay, setHideOverlay] = useState(true as boolean)
   const [serverChatCollection, setServerChatCollection] = useState([])
   const [voiceControl, setVoiceControl] = useState({ mute: false, deafen: false, image: { } })
+  const [textChannels, setTextChannels] = useState([] as Array<any>);
   const [currentServer, setCurrentServer] = useState({
     serverData: {
-      creationDate: '' as any,
-      serverName: '' as any,
-      serverId: '' as any,
-    },
+      creationDate: null,
+      serverName: null,
+      serverId: null,
+    } as unknown as ServerDataProps,
     channels: {
-      textChannels: {
+      textChannels: [
 
-      },
+      ] as Array<any>,
       // voiceChannels: {
 
       // }
@@ -46,7 +59,9 @@ export default function Dashboard({ user }: any) {
     useEffect(() => {
       console.log(currentServer)
     }, [currentServer])
-
+    useEffect(() => {
+      console.log(textChannels)
+    }, [textChannels])
   const handleToggleSidebar = () => {
     hideSidebar ? 
       setHideSibebar(false) : setHideSibebar(true)
@@ -74,45 +89,51 @@ export default function Dashboard({ user }: any) {
   const handleSetCurrentServer = async (serverId: string): Promise<void> => {
     const serverRef = doc(db, `server-collection`,  serverId)
     const serverSnap = await getDoc(serverRef)
-    const serverData = {...serverSnap.data()}
-    const serverTextChannelsRef = collection(db, `server-collection/${serverId}/text-channels/text-channels/channels`)
     const serverTextCategoriesRef = collection(db, `server-collection/${serverId}/text-channels/`)    
-    const serverTextChannelsSnap = await getDocs(serverTextChannelsRef)
     const serverTextCategoriesSnap = await getDocs(serverTextCategoriesRef)
-    const categoriesList = [] as Array<any>
-    const categoriesAndChannels = [] as Array<any>
-    serverTextCategoriesSnap.forEach(async (doc) =>  {
-      const { categoryId } = doc.data()
-      const categoryName: string = doc.id
-      const categoryCollection = { categoryId, categoryName, channelList: [] as Array<any> }
-      const channelCollectionRef = collection(db, `server-collection/${serverId}/text-channels/${categoryName}/channels/`)
-      const channelCollectionSnap = await getDocs(channelCollectionRef)
-        channelCollectionSnap.forEach((doc) => {
-          const { channelId } = doc.data()
-          const channelName = doc.id
-          const channelObj = { channelId, channelName }
-          categoryCollection.channelList.push(channelObj)
-        })
-        categoriesAndChannels.push(categoryCollection)
+    const categoryChannelsData = [] as Array<any>
+    await serverTextCategoriesSnap.forEach( (doc) => {
+      const category = {
+        categoryName: doc.id,
+        categoryId: doc.data().categoryId,
+        channels: [] as Array<any>,
+      }
+      // const channelCollectionSnap = await getDocs(
+      //   collection(db, `server-collection/${serverId}/text-channels/${doc.id}/channels/`))
+      // await channelCollectionSnap.forEach((doc) => {
+      //   category.channels = [...category.channels, { channelName: doc.id, channelId: doc.data().channelId }]
+      // })
+      categoryChannelsData.push(category)
     })
-    console.log(categoriesAndChannels)
+    
+    // serverTextCategoriesSnap.forEach(async (doc) =>  {
+    //   const { categoryId } = doc.data()
+    //   const categoryName: string = doc.id
+    //   const categoryCollection = { 
+    //     categoryId, 
+    //     categoryName, 
+    //     channelList: [] as Array<any> 
+    //   }
+    //   const channelCollectionRef = collection(db, `server-collection/${serverId}/text-channels/${categoryName}/channels/`)
+    //   const channelCollectionSnap = await getDocs(channelCollectionRef)
+    //     channelCollectionSnap.forEach((doc) => {
+    //       const { channelId } = doc.data()
+    //       const channelName = doc.id
+    //       const channelObj = { channelId, channelName }
+    //       categoryCollection.channelList.push(channelObj)
+    //     })
+    //     categoriesAndChannels.push(categoryCollection)
+    // }) 
+    console.log(categoryChannelsData)
     setCurrentServer({
-      serverData: {
-        ...serverData
-      },
+      ...currentServer,
+      serverData: { ...serverSnap.data() },
       channels: {
         textChannels: [
-          categoriesAndChannels
+          categoryChannelsData
         ]
       }
     })
-    // console.log(categoriesList)
-    // serverTextChannelsSnap.forEach((doc) => {
-    //   console.log(doc.id)
-    // })
-    // serverVoiceChannelsSnap.forEach((doc) => {
-    //   console.log(doc.id)
-    // })
   }
   return (
     <div className="inline-flex flex-row h-screen w-screen bg-white fixed">
@@ -128,8 +149,16 @@ export default function Dashboard({ user }: any) {
           currentServer={currentServer}
         />
       </div>
-        <ServerChatroomSection hideSidebar={hideSidebar} handleToggleSidebar={handleToggleSidebar} serverChatCollection={serverChatCollection} />
-        <Overlay hideOverlay={hideOverlay} handleToggleOverlay={handleToggleOverlay} uid={user.uid} />
+        <ServerChatroomSection 
+          hideSidebar={hideSidebar} 
+          handleToggleSidebar={handleToggleSidebar} 
+          serverChatCollection={serverChatCollection} 
+        />
+        <Overlay 
+          hideOverlay={hideOverlay} 
+          handleToggleOverlay={handleToggleOverlay} 
+          uid={user.uid} 
+        />
         <button onClick={ () => { signOut(auth); router.push('/login') } }className="fixed w-[50px] h-[50px] bottom-1 left-3 bg-red-900 rounded-full">
           Logout
         </button>

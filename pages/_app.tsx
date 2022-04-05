@@ -69,7 +69,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         const { username, tag, profile, serverList } = profileSnap.data()
         const serverCollection = [] as Array<any>
         const serversRef = collection(db, "server-collection")
-        const q = query(serversRef, where('serverID', 'in', [...serverList]))
+        const q = query(serversRef, where('serverId', 'in', [...serverList]))
         const qSnapshot = await getDocs(q)
           qSnapshot.forEach((doc) => { serverCollection.push(doc.data())})
         setUser({ ...user, uid: userId, username, tag, profile, serverList, serverCollection })
@@ -81,9 +81,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         console.error(err)
     }
   }
-  useEffect(() => {
-    console.log(user)
-  },  [user])
+  // useEffect(() => {
+  //   console.log(user)
+  // },  [user])
 
   return (
     <Component 
