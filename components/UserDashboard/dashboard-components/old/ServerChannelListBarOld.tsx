@@ -7,7 +7,6 @@ import undeafen from '../../../assets/images/undeafen.svg'
 import settings from '../../../assets/images/settings.svg'
 import cross from '../../../assets/images/cross.svg'
 import { v4 } from 'uuid'
-import ServerCategoryItem from './ServerCategoryItem'
 interface ServerChannelListBarProps {
   user: any,
   handleToggleSidebar(e: React.MouseEvent ): void,
@@ -16,12 +15,11 @@ interface ServerChannelListBarProps {
 }
 export default function ServerChannelListBar({  user, currentServer, handleToggleSidebar, }: ServerChannelListBarProps) {
   const { username, profile, tag } = user
-  const [textChannels, setTextChannels] = useState(null as any)
+  const [textChannels, setTextChannels] = useState(null as null || Array)
   const [voiceChannels, setVoiceChannels] = useState([])
   const { serverName, serverId, creationDate } = currentServer.serverData
   useEffect(() => {
     setTextChannels([...currentServer.categories.textCategories])
-    return () => setTextChannels({})
   }, [currentServer])
   useEffect(() =>  {
     console.log(textChannels)
@@ -41,14 +39,9 @@ export default function ServerChannelListBar({  user, currentServer, handleToggl
         
       </section>
       <section className="flex flex-col pt-4 p-2 h-full">
-        { textChannels !== null && textChannels.map((item, i) => {
-          return (
-            <ServerCategoryItem key={v4()} category={ item }/>
-          )
+        { textChannels !== null && textChannels.map((category) => {
           
-        }) }
-
-
+        })}
       </section>
       <section className="w-100 min-h-[58px] pl-4 pr-4 flex items-center justify-between bg-[#292b2f]">
         <div className="flex flex-row gap-2 items-center">
