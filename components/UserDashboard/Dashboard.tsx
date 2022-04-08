@@ -41,24 +41,15 @@ export default function Dashboard({ user }: any) {
   const [serverChatCollection, setServerChatCollection] = useState([])
   const [voiceControl, setVoiceControl] = useState({ mute: false, deafen: false, image: { } })
   const [textChannels, setTextChannels] = useState([] as Array<any>);
-  const [currentServer, setCurrentServer] = useState({
-    serverData: {
-      serverId: null,
-      creationDate: null,
-      serverName: null,
-    } as any,
-    categories: {
-      textCategories: [
-
-      ] as any,
-      // voiceChannels: {
-
-      // }
-    }
+  const [currentServerData, setCurrentServerData] = useState({
+    serverId: null,
+    creationDate: null,
+    serverName: null,
   })
+  const [currentServerChannels, setCurrentServerChannels] = useState([])
     // useEffect(() => {
-    //   console.log(currentServer)
-    // }, [currentServer])
+    //   console.log(currentServerData)
+    // }, [currentServerData])
     // useEffect(() => {
     //   console.log(textChannels)
     // }, [textChannels])
@@ -86,92 +77,35 @@ export default function Dashboard({ user }: any) {
     const target = e.target as HTMLDivElement
     console.log('drag')
   }
-  const handleSetCurrentServer = (serverId: string) => {
+  const handleSetCurrentServer = async (serverId: string) => {
     const serverRef = doc(db, `server-collection`,  serverId)
-    let serverSnapData = { }
-    let categoryChannelsData = [] as Array<any>
-    const serverSnap = getDoc(serverRef).then((res) => { 
-      const data = res.data()
-      serverSnapData = {...serverSnapData, ...data} 
-    })
-    if(serverSnapData.serverId === serverId) return
-    const serverTextCategoriesRef = collection(db, `server-collection/${serverId}/text-channels/`)    
-    const serverTextCategoriesSnap = getDocs(serverTextCategoriesRef)
-      .then((res) =>  {
-        res.forEach((doc) => {
-          const categoryId = doc.data().categoryId
-          const categoryName = doc.id
-          const cateogryCollection = { categoryName, categoryId, channels: [] }
-          categoryChannelsData.push(cateogryCollection)
-        }) 
-      }).then (() => {
-        categoryChannelsData.forEach((category) => {
-          const channelCollectionSnap = getDocs(
-          collection(db, `server-collection/${serverId}/text-channels/${category.categoryName}/channels/`))
-            .then((res) => {
-              res.forEach((doc) => {
-                const channelName = doc.id
-                const channelId = doc.data().channelId
-                const channel = { channelName, channelId }
-                category.channels.push(channel)
-              })
-            })
-        })
-      }).then(() => { 
-        setCurrentServer({
-          serverData: {
-            ...serverSnapData
-          },
-          categories: {
-            textCategories: [
-              ...categoryChannelsData
-            ]
-          }
-        })
-      })
-
-    // await serverTextCategoriesSnap.forEach( (doc) => {
-    //   const category = {
-    //     categoryName: doc.id,
-    //     categoryId: doc.data().categoryId,
-    //     channels: [] as Array<any>,
-    //   }
-    //   const channelCollectionSnap = await getDocs(
-    //     collection(db, `server-collection/${serverId}/text-channels/${doc.id}/channels/`))
-    //   await channelCollectionSnap.forEach((doc) => {
-    //     category.channels = [...category.channels, { channelName: doc.id, channelId: doc.data().channelId }]
-    //   })
-    //   categoryChannelsData.push(category)
-    // })
+    const serverTextCategoriesRef = collection(db, `server-collection/${serverId}/text-channels/`)
+    const data = [] as Array<any>
+    const serverSnap = await getDoc(serverRef)
+    // if(serverSnap.data()!.serverId === serverId) return
     
-    // serverTextCategoriesSnap.forEach(async (doc) =>  {
-    //   const { categoryId } = doc.data()
-    //   const categoryName: string = doc.id
-    //   const categoryCollection = { 
-    //     categoryId, 
-    //     categoryName, 
-    //     channelList: [] as Array<any> 
-    //   }
-    //   const channelCollectionRef = collection(db, `server-collection/${serverId}/text-channels/${categoryName}/channels/`)
-    //   const channelCollectionSnap = await getDocs(channelCollectionRef)
-    //     channelCollectionSnap.forEach((doc) => {
-    //       const { channelId } = doc.data()
-    //       const channelName = doc.id
-    //       const channelObj = { channelId, channelName }
-    //       categoryCollection.channelList.push(channelObj)
-    //     })
-    //     categoriesAndChannels.push(categoryCollection)
-    // }) 
-    // console.log(categoryChannelsData)
-    // setCurrentServer({
-    //   ...currentServer,
-    //   serverData: { ...serverSnap.data() },
-    //   channels: {
-    //     textChannels: [
-    //       categoryChannelsData
-    //     ]
-    //   }
-    // })
+
+    const serverTextCategoriesSnap = await getDocs(serverTextCategoriesRef)
+    serverTextCategoriesSnap.forEach((doc) => {
+      const { categoryId } = doc.data()
+      const categoryName = doc.id
+      // console.log(categoryName)
+      data.push({ categoryName, categoryId, channels: [] as Array<any> })
+    })
+    const map = data.map(async (item, i) => {
+      const serverTextCategoriesRef = collection(db, `server-collection/${serverId}/text-channels/${item.categoryName}/channels/`)
+      const serverTextCategoriesSnap = await getDocs(serverTextCategoriesRef)
+      return serverTextCategoriesSnap.forEach((doc) => {
+        if(!doc.exists()) return
+        const channelName = doc.id
+        const channelData = doc.data()
+        item.channels.push({ channelName, ...channelData})
+        console.log(data[i])
+      })
+    })
+
+    setCurrentServerData({ ...serverSnap.data() })
+    setCurrentServerChannels([])
   }
   return (
     <div className="inline-flex flex-row h-screen w-screen bg-white fixed">
@@ -184,7 +118,8 @@ export default function Dashboard({ user }: any) {
         <ServerChannelListBar 
           user={user} 
           handleToggleSidebar={handleToggleSidebar}
-          currentServer={currentServer}
+          currentServerData={currentServerData}
+          currentServerChannels={currentServerChannels}
         />
       </div>
         <ServerChatroomSection 

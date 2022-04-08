@@ -11,21 +11,22 @@ import ServerCategoryItem from './ServerCategoryItem'
 interface ServerChannelListBarProps {
   user: any,
   handleToggleSidebar(e: React.MouseEvent ): void,
-  currentServer: any,
+  currentServerChannels: any,
+  currentServerData: any,
 
 }
-export default function ServerChannelListBar({  user, currentServer, handleToggleSidebar, }: ServerChannelListBarProps) {
+export default function ServerChannelListBar({  user, currentServerChannels, handleToggleSidebar, currentServerData }: ServerChannelListBarProps) {
   const { username, profile, tag } = user
   const [textChannels, setTextChannels] = useState(null as any)
   const [voiceChannels, setVoiceChannels] = useState([])
-  const { serverName, serverId, creationDate } = currentServer.serverData
+  const { serverName, serverId, creationDate } = currentServerData
   useEffect(() => {
-    setTextChannels([...currentServer.categories.textCategories])
+    setTextChannels([...currentServerChannels])
     return () => setTextChannels({})
-  }, [currentServer])
-  useEffect(() =>  {
-    console.log(textChannels)
-  }, [textChannels])
+  }, [currentServerChannels])
+  // useEffect(() =>  {
+  //   console.log(textChannels)
+  // }, [textChannels])
   
   return (
     <main className="flex flex-col min-w-[246px] bg-[#2f3136] h-full">
@@ -43,7 +44,7 @@ export default function ServerChannelListBar({  user, currentServer, handleToggl
       <section className="flex flex-col pt-4 p-2 h-full">
         { textChannels !== null && textChannels.map((item, i) => {
           return (
-            <ServerCategoryItem key={v4()} category={ item }/>
+            <ServerCategoryItem key={v4()} category={ item } serverId={ currentServer.serverData.serverId }/>
           )
           
         }) }

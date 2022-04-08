@@ -3,23 +3,19 @@ import Image from 'next/image'
 import chevronSouth from '../../../assets/images/chevron-south.svg'
 import hash from '../../../assets/images/hash.svg'
 import { v4 } from 'uuid'
-export default function ServerCategoryItem({ category }: any) {
+import { collection, getDocs } from 'firebase/firestore'
+import { db } from '../../../backend/firebaseConfig'
+export default function ServerCategoryItem({ category, serverId }: any) {
   const { categoryId, categoryName} =  category
-  const [state, setState] = useState([])
-  useEffect(() => {
-    setState([...category.channels])
-  }, [category])
-  useEffect(() => {
-    console.log(state.channels)
-  }, [state])
+  const [state, setState] = useState([] as Array<any>)
+
   return (
     <div className="mb-4" data-categoryid={ categoryId }>
       <span className="flex items-center justify-start cursor-pointer uppercase">
         <Image src={chevronSouth} alt="chevronSouth" width="18px" height="18px" />
         <h5 className="text-xs text-[#72767D] hover:text-gray-300 font-bold">{ categoryName }</h5>
       </span>
-      { state.map((channel: any) => {
-        console.log(channel)
+      { state.length > 1 && state.map((channel: any) => {
         const { channelId, channelName } = channel
         return (
           <span 
