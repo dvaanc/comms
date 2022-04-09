@@ -33,7 +33,7 @@ export default function LoginForm({ user, addUser }: any) {
     const { email, password } = loginCredentials
     try {
       const user = await signInWithEmailAndPassword(auth, email, password)
-      router.push('/channels/@me')
+      router.push('/dashboard')
     } catch (err) {
       if(err instanceof Error) return console.log(err.message)
     }

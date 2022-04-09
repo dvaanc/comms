@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { v4 } from 'uuid'
 import chevronSouth from '../../../assets/images/chevron-south.svg'
 import Image from 'next/image'
@@ -9,6 +9,14 @@ interface ServerChatroomSelection {
   hideSidebar: boolean,
 }
 export default function ServerChatroomSection({ serverChatCollection, handleToggleSidebar, hideSidebar }: ServerChatroomSelection) {
+  const [message, setMessage] = useState('')
+  const handleInputChange = (e: React.ChangeEvent) => {
+    const target = e.target as HTMLInputElement
+    setMessage(target.value)
+  }
+  const newMessage = () => {
+    
+  }
   return (
     <main className="inline-flex flex-col w-full h-full bg-[#36393F] z-10">
     <section className="flex items-center shadow-bottom min-h-[56px] pl-2">
@@ -36,10 +44,16 @@ export default function ServerChatroomSection({ serverChatCollection, handleTogg
     </section>
     <form className="min-h-[74px] w-full pl-4 pr-4">
       <div className="flex flex-row items-center bg-[#40444B] w-full min-h-[44px] rounded-lg">
-        <div className="flex items-center justify-center min-w-[52px] cursor-pointer">
+        <div className="flex items-center justify-center min-w-[52px] cursor-pointer text-white">
           +
         </div>
-        <input type="text" placeholder="Message" className="w-full h-full outline-none text-gray-200 font-light bg-transparent pr-4" />
+        <input 
+          type="text" 
+          placeholder="Message" 
+          className="w-full h-full outline-none text-gray-200 font-light bg-transparent pr-4" 
+          value={ message }
+          onChange={ handleInputChange }
+        />
       </div>
 
     </form>

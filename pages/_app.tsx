@@ -41,8 +41,17 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      if(user) addUser(user.uid) ; router.push('/dashboard')
-      if(!user) router.push('/login')
+      if(user) {
+        if(router.pathname === '/login') {
+          addUser(user.uid)
+          router.push('/dashboard')
+        }
+        if(router.pathname === '/dashboard') {
+          addUser(user.uid)
+        }
+      }
+
+      if(router.pathname === '/dashboard' && !user) router.push('/login')
     })
   }, [])
   useEffect(() => {

@@ -21,13 +21,13 @@ export default function ServerListBar({ serverCollection, handleToggleOverlay, h
       return (
       <div className="flex flex-row items-center w-100" key={v4()} data-serverid={ server.serverId }>
         <span className="height-[7px] width-[8px] ml-[-5px] bg-white rounded-full "/>
-        <button onClick={handleServerClick} data-id="test" className="sidebar-btn text-white select-none">{ initials }</button>
+        <button onClick={ handleServerClick } data-id="test" className="sidebar-btn text-white select-none">{ initials }</button>
       </div>
         )
     })}
     <div className="flex flex-row justify-between items-center w-100" key={v4()}>
       <span className="height-[7px] width-[8px] ml-[-5px] bg-white"/>
-      <button id="new-server" onClick={handleToggleOverlay} className="sidebar-btn text-3xl text-green-400 font-light hover:text-white hover:bg-green-700">+</button>
+      <button id="new-server" onClick={ handleToggleOverlay } className="sidebar-btn text-3xl text-green-400 font-light hover:text-white hover:bg-green-700">+</button>
     </div>
   </section>
   )
