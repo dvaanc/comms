@@ -28,25 +28,22 @@ interface ServerChannelProps {
 
 export default function Dashboard({ user }: any) {
   const router = useRouter()
-  const [currentUser, setCurrentUser] = useState({ 
-    uid: null as null | any,
-    username: '' as string,
-    tag: null as null | number,
-    profile: null as any,
-    serverList: [] as Array<string>
-  })
-  const [isLoaded, setIsLoaded] = useState(false)
+  // const [currentUser, setCurrentUser] = useState({ 
+  //   uid: null as null | any,
+  //   username: '' as string,
+  //   tag: null as null | number,
+  //   profile: null as any,
+  //   serverList: [] as Array<string>
+  // })
   const [hideSidebar, setHideSibebar] = useState(false as boolean)
   const [hideOverlay, setHideOverlay] = useState(true as boolean)
   const [serverChatCollection, setServerChatCollection] = useState([])
-  const [voiceControl, setVoiceControl] = useState({ mute: false, deafen: false, image: { } })
-  const [textChannels, setTextChannels] = useState([] as Array<any>);
   const [currentServerData, setCurrentServerData] = useState({
     serverId: null,
     creationDate: null,
     serverName: null,
-  })
-  const [currentServerChannels, setCurrentServerChannels] = useState([])
+  } as any)
+  const [currentServerChannels, setCurrentServerChannels] = useState(null as Array<any> | null)
     // useEffect(() => {
     //   console.log(currentServerData)
     // }, [currentServerData])
@@ -82,30 +79,28 @@ export default function Dashboard({ user }: any) {
     const serverTextCategoriesRef = collection(db, `server-collection/${serverId}/text-channels/`)
     const data = [] as Array<any>
     const serverSnap = await getDoc(serverRef)
-    // if(serverSnap.data()!.serverId === serverId) return
-    
-
+    const serverData = await serverSnap.data()
+    if(serverData!.serverId === currentServerData.serverId) return
     const serverTextCategoriesSnap = await getDocs(serverTextCategoriesRef)
     serverTextCategoriesSnap.forEach((doc) => {
       const { categoryId } = doc.data()
       const categoryName = doc.id
-      // console.log(categoryName)
-      data.push({ categoryName, categoryId, channels: [] as Array<any> })
+      data.push({ categoryName, categoryId, display: true, channels: [] as Array<any> })
     })
-    const map = data.map(async (item, i) => {
+    data.forEach(async (item, i) => {
       const serverTextCategoriesRef = collection(db, `server-collection/${serverId}/text-channels/${item.categoryName}/channels/`)
       const serverTextCategoriesSnap = await getDocs(serverTextCategoriesRef)
-      return serverTextCategoriesSnap.forEach((doc) => {
-        if(!doc.exists()) return
+      serverTextCategoriesSnap.forEach((doc) => {
+        if (!doc.exists())
+          return
         const channelName = doc.id
         const channelData = doc.data()
-        item.channels.push({ channelName, ...channelData})
-        console.log(data[i])
+        item.channels.push({ channelName, ...channelData })
       })
+      setCurrentServerChannels([...data])
     })
+    setCurrentServerData({ ...serverData })
 
-    setCurrentServerData({ ...serverSnap.data() })
-    setCurrentServerChannels([])
   }
   return (
     <div className="inline-flex flex-row h-screen w-screen bg-white fixed">

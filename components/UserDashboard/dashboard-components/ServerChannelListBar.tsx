@@ -21,7 +21,9 @@ export default function ServerChannelListBar({  user, currentServerChannels, han
   const [voiceChannels, setVoiceChannels] = useState([])
   const { serverName, serverId, creationDate } = currentServerData
   useEffect(() => {
+    if(currentServerChannels === null) return
     setTextChannels([...currentServerChannels])
+    // console.log(currentServerChannels)
     return () => setTextChannels({})
   }, [currentServerChannels])
   // useEffect(() =>  {
@@ -42,9 +44,9 @@ export default function ServerChannelListBar({  user, currentServerChannels, han
         
       </section>
       <section className="flex flex-col pt-4 p-2 h-full">
-        { textChannels !== null && textChannels.map((item, i) => {
+        { textChannels !== null && textChannels.map((item: any) => {
           return (
-            <ServerCategoryItem key={v4()} category={ item } serverId={ currentServer.serverData.serverId }/>
+            <ServerCategoryItem key={v4()} category={ item } serverId={ serverId }/>
           )
           
         }) }
